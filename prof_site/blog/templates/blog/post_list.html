@@ -1,0 +1,53 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+  {% if latest_post_list %}
+    {% for post in latest_post_list %}
+      {% if forloop.first %}
+        <div class="row">
+          <div class = "jumbotron post-banner" style = "background-image:url({{post.banner_reduced.url}})">
+            <div class = "col-md-10 offset-md-1 col-sm-10 offset-sm-1 post-banner-text">
+              <h4>{{ post.date }}</h4>
+              <hr>
+              <h1 class="display-4"><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h1>
+              <hr>
+              <ul class="list-inline">
+              {% for author in post.authors.all %}
+                <li class="list-inline-item"><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+              {% endfor %}
+              </ul>
+              <p>{{ post.pandoc_process|safe|truncatewords:50 }}</p>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="row article">
+          <div class = "col-md-7 offset-md-1 col-sm-10 offset-sm-1 card-back">
+            <h5>{{ post.date }}</h5>
+            <h2 class="display-6">
+              <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+            </h2>
+            <ul class="list-inline">
+              {% for author in post.authors.all %}
+                <li class="list-inline-item">
+                  <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+            <img src="{{post.banner_reduced.url}}" />
+          </div>
+          <div class="col-md-3">
+            <h2>Upcoming Events</h2>
+            <hr>
+            <ul class="list-unstyled">
+              <li>No upcoming events.</li>
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% else %}
+      <p>No posts to display.</p>
+  {% endif %}
+{% endblock%}

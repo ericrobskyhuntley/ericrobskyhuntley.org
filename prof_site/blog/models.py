@@ -18,14 +18,20 @@ class Author(models.Model):
     desc = MarkdownxField(max_length=1000, blank=True)
     photo = models.ImageField(null=True, upload_to = 'authors/images/%Y/%m/%d')
     photo_gray = ImageSpecField(source='photo',
-                                  processors=[
-                                    Adjust(color=0,contrast=1.5, brightness=1.5),
-                                    ColorOverlay(color = "#CC003E", overlay_opacity = 0.6 )
-                                    ],
-                                  format='PNG')
+        processors=[
+            Adjust(color=0,contrast=1.5, brightness=1.5),
+            ColorOverlay(color = "#CC003E", overlay_opacity = 0.6 )
+        ],
+        format='PNG'
+    )
     photo_thumb = ImageSpecField(source='photo',
-                                  processors=[ResizeToFill(100, 100)],
-                                  format='PNG')
+        processors=[ResizeToFill(100, 100)],
+        format='PNG')
+    slug = AutoSlugField(populate_from='full_name',
+        default=None, 
+        always_update=False, 
+        max_length=150
+    )
     @property
     def formatted_markdown(self):
         return markdownify(self.desc)
@@ -52,7 +58,6 @@ class Author(models.Model):
         Returns full name.
         """
         return '%s %s %s' % (self.first, self.middle, self.last)
-    slug = AutoSlugField(populate_from='full_name', default=None, always_update=True, max_length=150)
 
     def __str__(self):
         return self.full_name
@@ -119,7 +124,7 @@ class Post(models.Model):
 
     slug = AutoSlugField(populate_from='title', 
         default=None,
-        always_update=True, 
+        always_update=False, 
         null=True, 
         max_length=150,
         slugify=lambda value: custom_slugify(value, words=4)

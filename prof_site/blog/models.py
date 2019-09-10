@@ -3,7 +3,6 @@ from django.contrib.gis.db import models
 from markdownx.utils import markdownify
 from .pandoc import pandocify
 from .custom_slug import custom_slugify
-# from django.utils.text import slugify
 from autoslug import AutoSlugField
 from django.utils.functional import cached_property
 from django.core.serializers import serialize
@@ -121,7 +120,6 @@ class Post(models.Model):
         on_delete='CASCADE'
     )
     bib = models.FileField(upload_to='bibs/', null=True)
-
     slug = AutoSlugField(populate_from='title', 
         default=None,
         always_update=False, 

@@ -23,7 +23,7 @@
 </div>
 <div class="row">
   <div class="col-md-10 offset-1">
-    <div id="author_map"></div>
+    <div id="author_map" class="map_container"></div>
   </div>
 </div>
 <!-- <div class="row">
@@ -38,28 +38,17 @@
 
   // authormapLeaflet('{{author_detail|escapejs}}', 'author_map')
 
-  const w = 960;
-  const h = 400;
 
-  const svg = d3.select("#author_map")
+  const svg = d3.select("div#author_map")
     .append("svg")
-    .attr("width", w)
-    .attr("height", h);
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("viewBox", "0 0 300 300")
+    .classed("map_content", true);
 
   let prj = d3.geoOrthographic()
     .rotate([76, -38, 32])
     .scale(1800)
-
-  // geoSatellite()
-  //     .translate([w / 2, h / 2])
-  //     .scale(1000)
-  //     .center([-5, 5])
-  //     .rotate([76, -34, 32])
-  //     .tilt(25)
-  //     .distance(1.6)
-  //     .clipAngle(Math.acos(1 / 1.1) * 180 / Math.PI)
-  //     .precision(0.1);
-
+    
   const path = d3.geoPath().projection(prj);
 
   var affil_locs = {{author_detail.loc_geojson|safe}};

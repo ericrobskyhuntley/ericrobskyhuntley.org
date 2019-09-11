@@ -1,35 +1,37 @@
 {% extends "blog/base.html" %}
 
 {% block content %}
-<div class="row">
-  <div class = "jumbotron post-banner" style = "background-image:url({{post_detail.banner_reduced.url}})">
-    <div class="col-md-10 offset-md-1 col-sm-10 offset-sm-1 post-banner-text">
-      <h4>{{ post_detail.date }}</h4>
-      <hr>
-      <h1 class="display-4">{{ post_detail.title }}</h1>
-      <hr>
-      <ul class="list-inline">
-        {% for author in post_detail.authors.all %}
-        <li class="list-inline-item"><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-  <div class = "row">
-    <div class="col-md-7 offset-1">
-      {{ post_detail.pandoc_process|safe }}
-    </div>
-    <div class="col-md-3">
-      {% for author in post_detail.authors.all %}
-        <img class="author-photo" src="{{ author.photo.url }}"/><br>
-        <ul class="list-unstyled">
-          <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
-          <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
-          <hr>
-          <li>{{ author.formatted_markdown|safe|truncatewords:50 }}</li>
+  <div class="row">
+    <div class = "jumbotron post-banner" style = "background-image:url({{post_detail.banner_reduced.url}})">
+      <div class="col-md-10 offset-md-1 col-sm-10 offset-sm-1 post-banner-text">
+        <h4>{{ post_detail.date }}</h4>
+        <hr>
+        <h1 class="display-4">{{ post_detail.title }}</h1>
+        <hr>
+        <ul class="list-inline">
+          {% for author in post_detail.authors.all %}
+          <li class="list-inline-item"><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+          {% endfor %}
         </ul>
-      {% endfor %}
       </div>
+    </div>
+    <div class="container">
+    <div class = "row">
+      <div class="col-md-7 offset-md-1">
+        {{ post_detail.pandoc_process|safe }}
+      </div>
+      <div class="col-md-3 d-none d-md-block">
+        {% for author in post_detail.authors.all %}
+          <img class="author-photo" src="{{ author.photo.url }}"/><br>
+          <ul class="list-unstyled">
+            <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+            <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
+            <hr>
+            <li>{{ author.formatted_markdown|safe|truncatewords:50 }}</li>
+          </ul>
+        {% endfor %}
+        </div>
+    </div>
   </div>
-  </div>
+</div>
 {% endblock%}

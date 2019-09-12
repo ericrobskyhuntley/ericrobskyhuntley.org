@@ -131,7 +131,6 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 #     os.path.join(PROJECT_DIR, "static"),
 # ]
 
-YARN_ROOT_PATH = '/home/ericmhuntley/Desktop/web-dev/'
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 # Maximum 3 MB upload size.
 MARKDOWNX_UPLOAD_MAX_SIZE =  3 * 1024 * 1024
@@ -141,7 +140,6 @@ MARKDOWNX_IMAGE_MAX_SIZE = { 'size': (600, 0), 'quality': 90 }
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'yarn.finders.YarnFinder',
 ]
 
 # STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')

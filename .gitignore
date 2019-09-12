@@ -4,6 +4,6 @@ node_modules/
 media/
 .DS_Store
 static/
-yarn.lock
 migrations/
 secrets/
+.vscode/

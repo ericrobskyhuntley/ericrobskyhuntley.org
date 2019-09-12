@@ -7,3 +7,4 @@ static/
 migrations/
 secrets/
 .vscode/
+.venv/

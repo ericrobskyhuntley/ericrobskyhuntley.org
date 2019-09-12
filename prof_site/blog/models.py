@@ -34,6 +34,7 @@ class Author(models.Model):
         always_update=False, 
         max_length=150
     )
+    vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
     @property
     def formatted_markdown(self):
         return markdownify(self.desc)
@@ -103,7 +104,7 @@ class Post(models.Model):
     title = models.CharField(max_length=150)
     content = MarkdownxField()
     timestamp = models.DateTimeField()
-    type = models.CharField(max_length=150)
+    content_type = models.CharField(max_length=150)
     authors = models.ManyToManyField(Author)
     banner = models.ImageField(null=True, upload_to = 'posts/banners/%Y/%m/%d')
     banner_thumb = ImageSpecField(

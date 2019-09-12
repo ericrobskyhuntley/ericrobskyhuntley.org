@@ -81,6 +81,7 @@ class Affiliation(models.Model):
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
     primary = models.BooleanField(default=False)
     title = models.CharField(max_length=150)
+    website = models.URLField(null=True)
 
     def __str__(self):
         return self.title

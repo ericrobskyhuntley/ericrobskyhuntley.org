@@ -8,10 +8,12 @@
   </div>
   <div class="col-md-6">
   <h3>{{ author_detail.full_name }}</h3>
-  <code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code>
-  {% if author_detail.twitter %}
-    | <code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code><br>
-  {% endif %}
+  <ul class="list-unstyled">
+    <li><code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code></li>
+    {% if author_detail.twitter %}
+      <li><code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code></li>
+    {% endif %}
+  </ul>
   <hr>
   {% for affiliation in author_detail.sorted_affiliation %}
     <ul class="list-unstyled">
@@ -34,11 +36,11 @@
   <p>{{ author_detail.formatted_markdown|safe }}</p>
   </div>
 </div>
-<div class="row">
+{% comment %} <div class="row">
   <div class="col-md-10 offset-1">
     <div id="author_map" class="map_container"></div>
   </div>
-</div>
+</div> {% endcomment %}
 <!-- <div class="row">
   <div class="col-md-10 offset-1">
     <div id="author_map"></div>

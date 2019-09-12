@@ -33,6 +33,10 @@
   {% if author_detail.pgp %}
     <code>pgp: {{ author_detail.pgp }}</code>
   {% endif %}
+  {% if author_detail.vita %}
+    <hr>
+    <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{{ author_detail.vita.url }}">Curriculum vita.</a></button>
+  {% endif %}
   <p>{{ author_detail.formatted_markdown|safe }}</p>
   </div>
 </div>

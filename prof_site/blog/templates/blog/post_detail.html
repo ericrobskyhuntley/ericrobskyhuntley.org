@@ -16,20 +16,20 @@
       </div>
     </div>
     <div class="container">
-    <div class = "row">
-      <div class="col-md-7 offset-md-1">
-        {{ post_detail.pandoc_process|safe }}
-      </div>
-      <div class="col-md-3 d-none d-md-block">
-        {% for author in post_detail.authors.all %}
-          <img class="author-photo" src="{{ author.photo.url }}"/><br>
-          <ul class="list-unstyled">
-            <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
-            <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
-            <hr>
-            <li>{{ author.formatted_markdown|safe|truncatewords:50 }}</li>
-          </ul>
-        {% endfor %}
+      <div class = "row">
+        <div class="col-md-7 offset-md-1">
+          {{ post_detail.pandoc_process|safe }}
+        </div>
+        <div class="col-md-3 d-none d-md-block">
+          {% for author in post_detail.authors.all %}
+            <img class="author-photo" src="{{ author.photo.url }}"/><br>
+            <ul class="list-unstyled">
+              <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+              <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
+              <hr>
+              <li>{{ author.formatted_markdown|safe|truncatewords:50 }}</li>
+            </ul>
+          {% endfor %}
         </div>
     </div>
   </div>

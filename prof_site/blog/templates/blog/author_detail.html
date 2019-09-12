@@ -3,21 +3,30 @@
 
 {% block content %}
 <div class="row">
-  <div class="col-md-4 offset-1">
+  <div class="col-md-4 offset-md-1 col-sm-12">
     <img class="author-photo" src="{{ author_detail.photo.url }}"/>
   </div>
   <div class="col-md-6">
   <h3>{{ author_detail.full_name }}</h3>
-
   <code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code>
+  {% if author_detail.twitter %}
+    | <code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code><br>
+  {% endif %}
   <hr>
   {% for affiliation in author_detail.sorted_affiliation %}
-    <ul class="list-unstyled small-text">
+    <ul class="list-unstyled">
       <li><em>{{ affiliation.title }}</em></li>
       <li>{{ affiliation.institution.dpt }}, {{ affiliation.institution.inst }}</li>
       <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
     </ul>
   {% endfor %}
+  <hr>
+  {% if author_detail.orcid %}
+    <code>orcid: <a href="https://orcid.org/{{ author_detail.orcid }}">{{ author_detail.orcid }}</a></code><br>
+  {% endif %}
+  {% if author_detail.pgp %}
+    <code>pgp: {{ author_detail.pgp }}</code>
+  {% endif %}
   <p>{{ author_detail.formatted_markdown|safe }}</p>
   </div>
 </div>
@@ -42,7 +51,7 @@
   const svg = d3.select("div#author_map")
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", "0 0 300 300")
+    .attr("viewBox", "0 0 300 150")
     .classed("map_content", true);
 
   let prj = d3.geoOrthographic()

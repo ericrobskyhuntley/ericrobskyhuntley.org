@@ -15,7 +15,11 @@
   <hr>
   {% for affiliation in author_detail.sorted_affiliation %}
     <ul class="list-unstyled">
-      <li><em>{{ affiliation.title }}</em></li>
+      {% if affiliation.website %}
+        <li><a href="{{ affiliation.website }}"><em>{{ affiliation.title }}</em></a></li>
+      {% else %}
+        <li><em>{{ affiliation.title }}</em></li>
+      {% endif %}
       <li>{{ affiliation.institution.dpt }}, {{ affiliation.institution.inst }}</li>
       <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
     </ul>

@@ -18,6 +18,8 @@
     <div class="container">
       <div class = "row">
         <div class="col-md-7 offset-md-1">
+          <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{{ post_detail.attach }}">Download attachment.</a></button>
+          <hr>
           {{ post_detail.pandoc_process|safe }}
         </div>
         <div class="col-md-3 d-none d-md-block">

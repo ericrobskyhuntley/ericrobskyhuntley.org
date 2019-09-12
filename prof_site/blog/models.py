@@ -124,6 +124,7 @@ class Post(models.Model):
         on_delete='CASCADE'
     )
     bib = models.FileField(upload_to='bibs/', null=True)
+    attach = models.FileField(upload_to='attachments/', blank=True, default='')
     slug = AutoSlugField(populate_from='title', 
         default=None,
         always_update=False, 

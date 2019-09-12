@@ -2,7 +2,7 @@ from markdownx.models import MarkdownxField
 from django.contrib.gis.db import models
 from markdownx.utils import markdownify
 from .pandoc import pandocify
-from .custom_slug import custom_slugify
+from autoslug.settings import slugify as default_slugify
 from autoslug import AutoSlugField
 from django.utils.functional import cached_property
 from django.core.serializers import serialize
@@ -18,6 +18,7 @@ class Author(models.Model):
     photo = models.ImageField(null=True, upload_to = 'authors/images/%Y/%m/%d')
     orcid = models.CharField(max_length=19, null=True)
     pgp = models.CharField(max_length=50, null=True)
+    twitter = models.CharField(max_length=50, null=True)
     photo_gray = ImageSpecField(source='photo',
         processors=[
             Adjust(color=0,contrast=1.5, brightness=1.5),
@@ -126,9 +127,11 @@ class Post(models.Model):
         default=None,
         always_update=False, 
         null=True, 
-        max_length=150,
-        slugify=lambda value: custom_slugify(value, words=4)
+        max_length=150
     )
+
+    def slugify_function(self, content, words):
+        return "-".join(default_slugify(content).split('-', words)[:words])
 
     @property
     def date(self):

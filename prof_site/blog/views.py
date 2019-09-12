@@ -25,6 +25,6 @@ class AuthorDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ua_all'] = serialize('geojson', UrbanArea.objects.all(), fields=('geom'))
-        context['land_all'] = serialize('geojson', Land.objects.all(), fields=('geom'))
+        # context['ua_all'] = serialize('geojson', UrbanArea.objects.all(), fields=('geom'))
+        # context['land_all'] = serialize('geojson', Land.objects.all(), fields=('geom'))
         return context

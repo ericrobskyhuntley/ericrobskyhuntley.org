@@ -8,3 +8,4 @@ migrations/
 secrets/
 .vscode/
 .venv/
+venv/

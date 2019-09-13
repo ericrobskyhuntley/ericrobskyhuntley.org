@@ -15,8 +15,8 @@ def pandocify(content, csl, bib):
         ]
         extra_args = ['--mathjax',
                  '--smart',
-                 '--bibliography='+settings.PROJECT_DIR+bib,
-                 '--csl='+settings.PROJECT_DIR+csl]
+                 '--bibliography='+settings.BASE_DIR+bib,
+                 '--csl='+settings.BASE_DIR+csl]
         content = content + "\n\r### References"
     else:
         filters = []

@@ -131,7 +131,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 # Maximum 3 MB upload size.
-MARKDOWNX_UPLOAD_MAX_SIZE =  3 * 1024 * 1024
+MARKDOWNX_UPLOAD_MAX_SIZE =  12 * 1024 * 1024
 
 MARKDOWNX_IMAGE_MAX_SIZE = { 'size': (600, 0), 'quality': 90 }
 

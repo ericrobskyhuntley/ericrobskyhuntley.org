@@ -11,7 +11,7 @@ top-level-division: section
 def pandocify(content, csl, bib):
     if bib:
         filters = ['pandoc-citeproc',
-            'pandoc-citeproc-preamble'
+            # 'pandoc-citeproc-preamble'
         ]
         extra_args = ['--mathjax',
                  '--smart',

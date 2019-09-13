@@ -8,7 +8,6 @@ django-leaflet==0.24.0
 django-location-field==2.0.6
 django-markdown==0.8.4
 django-markdownx==2.0.28
-django-yarn==0.0.2
 Markdown==3.1
 pilkit==2.0
 Pillow==5.4.1

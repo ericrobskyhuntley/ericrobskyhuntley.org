@@ -3,7 +3,7 @@ from django.http import Http404
 from django.views import generic
 from django.core.serializers import serialize
 
-from .models import Post, Author, UrbanArea, Land, BathContours, ElevContours
+from .models import Post, Author, UrbanArea, Land
 
 class IndexView(generic.ListView):
     template_name = 'blog/post_list.html'

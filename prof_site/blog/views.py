@@ -3,7 +3,7 @@ from django.http import Http404
 from django.views import generic
 from django.core.serializers import serialize
 
-from .models import Post, Author, UrbanArea, Land
+from .models import Post, Author, UrbanArea, Land, BathContours, ElevContours
 
 class IndexView(generic.ListView):
     template_name = 'blog/post_list.html'
@@ -25,6 +25,22 @@ class AuthorDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # context['ua_all'] = serialize('geojson', UrbanArea.objects.all(), fields=('geom'))
-        # context['land_all'] = serialize('geojson', Land.objects.all(), fields=('geom'))
+        context['ua_all'] = serialize('geojson', 
+            UrbanArea.objects.all(),
+            fields=('geom')
+        )
+        context['land_all'] = serialize('geojson', 
+            Land.objects.all(), 
+            fields=('geom')
+        )
+        # context['bath_all'] = serialize(
+        #     'geojson', 
+        #     BathContours.objects.all(),
+        #     fields=('geom')
+        # )
+        # context['elev_all'] = serialize(
+        #     'geojson',
+        #     ElevContours.objects.all(),
+        #     fields=('geom')
+        # )
         return context

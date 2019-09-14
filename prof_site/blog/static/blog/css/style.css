@@ -70,10 +70,6 @@ img {
   width: auto;
 }
 
-#author_map {
-  margin-top:20px;
-}
-
 a {
   color: #7F2642;
 }
@@ -83,42 +79,66 @@ a:hover, .navbar-brand:hover {
   text-decoration: none;
 }
 
+.bath {
+    fill: none;
+    stroke: #7F2642;
+    stroke-width: 0.25;
+    opacity: 1;
+}
+
+.elev {
+    fill: none;
+    stroke: #7F2642;
+    stroke-width: 0.25;
+    opacity: 1;
+}
+
+
 .graticule_10 {
     fill: none;
-    stroke: #CC003E;
-    stroke-width: 1;
+    stroke: #7F2642;
+    stroke-width: 0.75;
 }
 
 .graticule_05 {
     fill: none;
-    stroke: #CC003E;
+    stroke: #7F2642;
     stroke-width: 0.5;
     opacity: 0.5;
 }
 
 .graticule_01 {
     fill: none;
-    stroke: #CC003E;
+    stroke: #7F2642;
     stroke-width: 0.25;
-    opacity: 0.4;
+    opacity: 0.25;
 }
 
 .sphere {
     fill: none;
-    stroke: #CC003E;
+    stroke: #7F2642;
     stroke-width:2;
   }
 
 .land {
-    fill: #7F2642;
-    stroke: rgba(255, 255, 255, 0.75);
-    stroke-width: 0.5;
+    fill: #212529;
+    /* fill: rgba(255, 255, 255, 1); */
+    stroke: rgba(255, 255, 255, 1);
+    stroke-width: 0.75;
+    fill-opacity: 0.15;
 }
 
 .ua {
-    fill: rgba(255, 255, 255, 1);
+    fill: #7F2642;
     stroke: transparent;
     stroke-width: 1;
+    opacity: 0.25;
+}
+
+.locator {
+  stroke: #ffffff;
+  fill: #7F2642;
+  opacity: 0.8;
 }
 
 .label {
@@ -174,19 +194,14 @@ html, body {
   font-family: 'Crimson Text', serif;
 }
 
-.map_container {
-    display: inline-block;
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    vertical-align: top;
-    overflow: hidden;
+#author_map {
+  margin-top:20px;
+  width: 100%;
+  overflow: hidden;
 }
+
 .map_content {
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    left: 0;
+  height: 400px;
 }
 
 .foot-list {

@@ -100,6 +100,21 @@ class Land(models.Model):
     def __str__(self):
         return str(self.geom)
 
+
+class BathContours(models.Model):
+    geom = models.MultiLineStringField()
+    depth = models.IntegerField()
+
+    def __str__(self):
+        return str(self.geom) 
+
+class ElevContours(models.Model):
+    geom = models.MultiLineStringField()
+    elev = models.IntegerField()
+
+    def __str__(self):
+        return str(self.geom)
+
 class Post(models.Model):
     title = models.CharField(max_length=150)
     content = MarkdownxField()

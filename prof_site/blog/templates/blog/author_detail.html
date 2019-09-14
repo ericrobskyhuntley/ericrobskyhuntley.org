@@ -35,7 +35,7 @@
   {% endif %}
   {% if author_detail.vita %}
     <hr>
-    <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{{ author_detail.vita.url }}">Curriculum vita.</a></button>
+    <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
   {% endif %}
   <p>{{ author_detail.formatted_markdown|safe }}</p>
   </div>

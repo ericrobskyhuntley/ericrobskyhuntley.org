@@ -35,33 +35,21 @@
   {% endif %}
   {% if author_detail.vita %}
     <hr>
-    <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{{ author_detail.vita.url }}">Curriculum vita.</a></button>
+    <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
   {% endif %}
   <p>{{ author_detail.formatted_markdown|safe }}</p>
   </div>
 </div>
-{% comment %} <div class="row">
-  <div class="col-md-10 offset-1">
-    <div id="author_map" class="map_container"></div>
+<div class="row">
+  <div id="author_map" class="col-md-10 offset-md-1 d-none d-md-block">
   </div>
-</div> {% endcomment %}
-<!-- <div class="row">
-  <div class="col-md-10 offset-1">
-    <div id="author_map"></div>
-  </div>
-</div> -->
-<script src="{% static 'd3-geo-projection/dist/d3-geo-projection.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'd3/dist/d3.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'topojson/dist/topojson.min.js' %}" type="text/javascript"></script>
+</div>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <script type="text/javascript">
-
-  // authormapLeaflet('{{author_detail|escapejs}}', 'author_map')
-
 
   const svg = d3.select("div#author_map")
     .append("svg")
-    .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", "0 0 300 150")
+		.attr("width", "100%")
     .classed("map_content", true);
 
   let prj = d3.geoOrthographic()
@@ -70,22 +58,24 @@
     
   const path = d3.geoPath().projection(prj);
 
-  var affil_locs = {{author_detail.loc_geojson|safe}};
+  let affil_locs = {{author_detail.loc_geojson|safe}};
 
-  var ua = {{ua_all|safe}};
-  var land = {{land_all|safe}};
+  let ua = {{ua_all|safe}};
+  let land = {{land_all|safe}};
+  //let bath = {{bath_all|safe}};
+  //let elev = {{elev_all|safe}};
 
   let graticule_10 = d3.geoGraticule().step([10, 10])();
   let graticule_05 = d3.geoGraticule().step([5, 5])();
   let graticule_01 = d3.geoGraticule().step([1, 1])();
 
-  Promise.all([ua, affil_locs, graticule_10, graticule_05, graticule_01, land]).then(function(data){
+  Promise.all([ua, affil_locs, graticule_10, graticule_05, graticule_01, land, /*bath, elev*/]).then(function(data){
 
     var symbolGenerator = d3.symbol()
 	     .size(100);
 
    var land_area = svg.selectAll('path.land')
-     .data(land.features)
+     .data(data[5].features)
      .enter()
      .append("path")
      .classed('land', true)
@@ -93,11 +83,25 @@
 
     // 1 degree graticule.
     var urban_area = svg.selectAll('path.ua')
-      .data(ua.features)
+      .data(data[0].features)
       .enter()
       .append("path")
       .classed('ua', true)
       .attr("d", path);
+
+    //var bath = svg.selectAll('path.bath')
+    //  .data([data[6]])
+    //  .enter()
+    //  .append('path')
+    //  .classed('bath', true)
+    //  .attr('d', path);
+    
+    //var elev = svg.selectAll('path.elev')
+    //  .data([data[7]])
+    //  .enter()
+    //  .append('path')
+    //  .classed('elev', true)
+    //  .attr('d', path);
 
     // 10 degree graticule.
     var grat_10 = svg.selectAll('path.graticule_10')
@@ -125,11 +129,11 @@
       .attr('d', path)
       .exit().remove();
 
-    var sphere = svg.selectAll('path.sphere')
-      .data([{type: 'Sphere'}])
-      .enter().append('path').classed('sphere', true)
-      .attr('d', path)
-      .exit().remove();
+    //var sphere = svg.selectAll('path.sphere')
+    //  .data([{type: 'Sphere'}])
+    //  .enter().append('path').classed('sphere', true)
+    //  .attr('d', path)
+    //  .exit().remove();
 
     var locs = svg.selectAll("circle")
         .data(data[1].features)
@@ -141,10 +145,8 @@
         .attr("cy", function (d) {
           return prj(d.geometry.coordinates)[1];
         })
-        .style("stroke", "white")
-        .style("fill", "#CC003E")
-        .style("opacity", 0.7)
-        .attr("r", 4);
+        .attr("r", 4)
+        .classed('locator', true);
 
     var labels = d3.select("#author_map").selectAll("div.label")
         .data(data[1].features).enter()

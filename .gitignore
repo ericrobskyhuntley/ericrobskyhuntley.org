@@ -3,8 +3,9 @@ __pycache__/
 node_modules/
 media/
 .DS_Store
-static/
+prof_site/static/
 migrations/
 secrets/
 .vscode/
 .venv/
+venv/

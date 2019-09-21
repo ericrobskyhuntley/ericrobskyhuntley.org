@@ -19,7 +19,7 @@
       <div class = "row">
         <div class="col-md-7 offset-md-1">
           {% if post_detail.attach %}
-            <button type="button" class="btn btn-primary btn-lg btn-block"><a href="{{ post_detail.attach.url }}">Download {{ post_detail.content_type }}.</a></button>
+            <a href="{{ post_detail.attach.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Download {{ post_detail.content_type }}.</button></a>
             <hr>
           {% endif %}
           {{ post_detail.pandoc_process|safe }}

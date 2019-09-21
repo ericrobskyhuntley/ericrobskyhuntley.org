@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 from datetime import datetime
 from .secrets import secrets
+from pathlib import Path
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,9 +26,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = secrets.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.ericrobskyhuntley.org', 'ericrobskyhuntley.org', 'www.ericrobskyhuntley.org', 'localhost']
 
 # Application definition
 
@@ -63,6 +64,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'blog.context_processors.main_author',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -82,7 +84,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': secrets.DB_NAME,
-        'USER': secrets.DB_USER,
+        'USER': secrets.DB_USER, 
         'PASSWORD': secrets.DB_PW,
         'HOST': secrets.DB_HOST,
         'PORT': secrets.DB_PORT
@@ -125,11 +127,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-PROJECT_DIR = os.path.dirname('/home/ericmhuntley/Desktop/web-dev/')
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
-# STATICFILES_DIRS = [
-#     os.path.join(PROJECT_DIR, "static"),
-# ]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 
 

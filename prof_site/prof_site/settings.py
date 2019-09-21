@@ -130,9 +130,11 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
+
+
 MARKDOWNX_MEDIA_PATH = datetime.now().strftime('markdownx/%Y/%m/%d')
 # Maximum 3 MB upload size.
-MARKDOWNX_UPLOAD_MAX_SIZE =  12 * 1024 * 1024
+MARKDOWNX_UPLOAD_MAX_SIZE =  15 * 1024 * 1024
 
 MARKDOWNX_IMAGE_MAX_SIZE = { 'size': (600, 0), 'quality': 90 }
 
@@ -140,3 +142,10 @@ STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 15728640
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15728640
+
+
+# STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media/')

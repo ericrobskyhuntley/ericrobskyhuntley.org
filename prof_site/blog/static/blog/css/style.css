@@ -166,7 +166,8 @@ label:before {
 }
 
 .navbar {
-  padding-left: 0px;
+  background-color: #FFF;
+  padding-left: 20px;
   /* margin-bottom: 10px; */
 }
 

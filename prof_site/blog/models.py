@@ -35,6 +35,7 @@ class Author(models.Model):
         max_length=150
     )
     vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
+    page = models.BooleanField(default=False)
     @property
     def formatted_markdown(self):
         return markdownify(self.desc)

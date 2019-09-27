@@ -14,7 +14,13 @@
                 <hr>
                 <ul class="list-inline">
                 {% for author in post.authors.all %}
-                  <li class="list-inline-item"><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+                  <li class="list-inline-item">
+                    {% if author.page %}
+                      <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+                    {% else %}
+                      {{ author.full_name }}
+                    {% endif %}
+                  </li>
                 {% endfor %}
                 </ul>
                 <p>{{ post.pandoc_process|safe|truncatewords:50 }}</p>
@@ -34,22 +40,29 @@
               <ul class="list-inline">
                 {% for author in post.authors.all %}
                   <li class="list-inline-item">
-                    <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+                    {% if author.page %}
+                      <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+                    {% else %}
+                      {{ author.full_name }}
+                    {% endif %}
                   </li>
                 {% endfor %}
               </ul>
               <img src="{{post.banner_reduced.url}}" />
+              <hr class="article-break">
       {% endif %}
     {% endfor %}
             </div>
           </div>
-          <div class="col-md-3 d-none d-md-block">
+          <div class="sticky-top col-md-3 d-none d-md-block">
+            <div id="events-col" class="sticky-top">
             <h2>Upcoming Events</h2>
             <hr>
             <ul class="list-unstyled">
               <li>No upcoming events.</li>
               <li></li>
             </ul>
+          </div>
           </div>
   {% else %}
       <p>No posts to display.</p>

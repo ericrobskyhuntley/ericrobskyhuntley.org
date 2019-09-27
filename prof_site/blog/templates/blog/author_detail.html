@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<div class="container">
   <div class="row">
     <div class="col-md-4 offset-md-1 col-sm-12">
       <img class="author-photo" src="{{ author_detail.photo.url }}"/>
@@ -35,16 +36,21 @@
     {% endif %}
     </div>
     <div class="container">
-    {% if author_detail.vita %}
-      <hr>
-      <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
-    {% endif %}
-    <p>{{ author_detail.formatted_markdown|safe }}</p>
+      <div class="row">
+        <div class="col-md-10 offset-1">
+          {% if author_detail.vita %}
+            <hr>
+            <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
+          {% endif %}
+          <p>{{ author_detail.formatted_markdown|safe }}</p>
+        </div>
+      </div>
     </div>
 </div>
 <div class="row">
   <div id="author_map" class="col-md-10 offset-md-1 d-none d-md-block">
   </div>
+</div>
 </div>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script type="text/javascript">

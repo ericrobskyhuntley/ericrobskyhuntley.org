@@ -150,7 +150,7 @@ class Post(models.Model):
         null=True,
         on_delete='CASCADE'
     )
-    bib = models.FileField(upload_to='bibs/', null=True)
+    bib = models.FileField(upload_to='bibs/', blank=True)
     attach = models.FileField(upload_to='attachments/', blank=True, default='')
     slug = AutoSlugField(populate_from='title', 
         default=None,

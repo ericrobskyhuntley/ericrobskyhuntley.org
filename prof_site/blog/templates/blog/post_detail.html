@@ -39,6 +39,7 @@
               <ul class="list-unstyled">
                 <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
                 <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
+                <li>{{ author.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
                 <hr>
                 <li>{{ author.formatted_markdown|safe|truncatewords:50 }}</li>
               </ul>
@@ -47,6 +48,7 @@
               <ul class="list-unstyled">
                 <li><a href="{% url 'blog:author_detail' author.slug %}"></a>{{ author.full_name }}</a></li>
                 <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
+                <li>{{ author.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
                 <hr>
               </ul>
             {% endif %}

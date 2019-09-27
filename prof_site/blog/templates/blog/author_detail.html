@@ -14,6 +14,7 @@
       {% if author_detail.twitter %}
         <li><code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code></li>
       {% endif %}
+      <li>{{ author_detail.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
     </ul>
     <hr>
     {% for affiliation in author_detail.sorted_affiliation %}

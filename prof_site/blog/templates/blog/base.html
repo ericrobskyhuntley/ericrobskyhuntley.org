@@ -15,52 +15,55 @@
 
 <body>
   <nav class="navbar navbar-expand-lg navbar-light sticky-top">
-        <a class="navbar-brand" href="/"><h3>{{ main_author }}</h3></a></h1>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                About
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="{% url 'blog:author_detail' main_author.slug %}">Biography</a>
-                <a class="dropdown-item" href="{{ main_author.vita.url }}">CV</a>
-              </div>
-            </li>
-          </ul>
-      </nav>
-    <div id="content">
-      {% block content %}{% endblock %}
+    <a class="navbar-brand" href="/"><h3>{{ main_author }}</h3></a></h1>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            About
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'blog:author_detail' main_author.slug %}">Biography</a>
+            <a class="dropdown-item" href="{{ main_author.vita.url }}">CV</a>
+          </div>
+        </li>
+      </ul>
     </div>
+  </nav>
+  <div id="content">
+    <div class="container-fluid">
+    {% block content %}{% endblock %}
+    </div>
+  </div>
     <!-- Footer -->
-<footer class="page-footer font-small pt-4">
-    <div class="container text-center text-md-left">
-    <hr>
-      <div class="row foot-list">
-        <div class="col-md-6 mt-md-0 mt-3">
-          <!-- <h5>About Eric</h5> -->
-          <ul class="list-unstyled">
-            <li class="small-text">Built using FOSS, including: (<a href="https://docs.djangoproject.com/en/2.1/ref/contrib/gis/" target="_blank">Geo</a>)<a href="https://www.djangoproject.com/" target="_blank">Django</a>, <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>/<a href="https://postgis.net/" target="_blank">PostGIS</a>, <a href="https://pypi.org/project/pypandoc/" target="_blank">(Py)</a><a href="https://pandoc.org/" target="_blank">Pandoc</a>, <a href="https://d3js.org/" target="_blank">D3</a>, and <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>.</li>
-            <li class="small-text"><a href="https://gitlab.com/ehuntley/prof_site">Source code</a> is made available under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3.0</a>.</li>
-            <li class="small-text">Served on <a href = "https://ubuntu.com/">Ubuntu</a> using <a href="https://gunicorn.org/">Gunicorn</a> and <a href="https://www.nginx.com/">NGINX</a>.</li> 
-          </ul>
-        </div>
-        <div class="col-md-2 offset-md-2 d-none d-md-block">
-          <img src="{% static "blog/images/mit-logo.png" %}"/>
-        </div>
-        <div class="col-md-2 d-none d-md-block">
-          <img src="{% static "blog/images/uk-logo.png" %}"/>
+  <footer class="page-footer font-small pt-4">
+      <div class="container text-center text-md-left">
+      <hr>
+        <div class="row foot-list">
+          <div class="col-md-6 mt-md-0 mt-3">
+            <!-- <h5>About Eric</h5> -->
+            <ul class="list-unstyled">
+              <li class="small-text">Built using FOSS, including: (<a href="https://docs.djangoproject.com/en/2.1/ref/contrib/gis/" target="_blank">Geo</a>)<a href="https://www.djangoproject.com/" target="_blank">Django</a>, <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>/<a href="https://postgis.net/" target="_blank">PostGIS</a>, <a href="https://pypi.org/project/pypandoc/" target="_blank">(Py)</a><a href="https://pandoc.org/" target="_blank">Pandoc</a>, <a href="https://d3js.org/" target="_blank">D3</a>, and <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>.</li>
+              <li class="small-text"><a href="https://gitlab.com/ehuntley/prof_site">Source code</a> is made available under <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License v3.0</a>.</li>
+              <li class="small-text">Served on <a href = "https://ubuntu.com/">Ubuntu</a> using <a href="https://gunicorn.org/">Gunicorn</a> and <a href="https://www.nginx.com/">NGINX</a>.</li> 
+            </ul>
+          </div>
+          <div class="col-md-2 offset-md-2 d-none d-md-block">
+            <img src="{% static "blog/images/mit-logo.png" %}"/>
+          </div>
+          <div class="col-md-2 d-none d-md-block">
+            <img src="{% static "blog/images/uk-logo.png" %}"/>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="footer-copyright text-center py-3">
-    </div>
+      <div class="footer-copyright text-center py-3">
+      </div>
   </footer>
 </body>
 </html>

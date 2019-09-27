@@ -2,43 +2,45 @@
 {% load static %}
 
 {% block content %}
-<div class="row">
-  <div class="col-md-4 offset-md-1 col-sm-12">
-    <img class="author-photo" src="{{ author_detail.photo.url }}"/>
-  </div>
-  <div class="col-md-6">
-  <h3>{{ author_detail.full_name }}</h3>
-  <ul class="list-unstyled">
-    <li><code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code></li>
-    {% if author_detail.twitter %}
-      <li><code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code></li>
-    {% endif %}
-  </ul>
-  <hr>
-  {% for affiliation in author_detail.sorted_affiliation %}
+  <div class="row">
+    <div class="col-md-4 offset-md-1 col-sm-12">
+      <img class="author-photo" src="{{ author_detail.photo.url }}"/>
+    </div>
+    <div class="col-md-6">
+    <h3>{{ author_detail.full_name }}</h3>
     <ul class="list-unstyled">
-      {% if affiliation.website %}
-        <li><a href="{{ affiliation.website }}"><em>{{ affiliation.title }}</em></a></li>
-      {% else %}
-        <li><em>{{ affiliation.title }}</em></li>
+      <li><code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code></li>
+      {% if author_detail.twitter %}
+        <li><code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code></li>
       {% endif %}
-      <li>{{ affiliation.institution.dpt }}, {{ affiliation.institution.inst }}</li>
-      <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
     </ul>
-  {% endfor %}
-  <hr>
-  {% if author_detail.orcid %}
-    <code>orcid: <a href="https://orcid.org/{{ author_detail.orcid }}">{{ author_detail.orcid }}</a></code><br>
-  {% endif %}
-  {% if author_detail.pgp %}
-    <code>pgp: {{ author_detail.pgp }}</code>
-  {% endif %}
-  {% if author_detail.vita %}
     <hr>
-    <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
-  {% endif %}
-  <p>{{ author_detail.formatted_markdown|safe }}</p>
-  </div>
+    {% for affiliation in author_detail.sorted_affiliation %}
+      <ul class="list-unstyled">
+        {% if affiliation.website %}
+          <li><a href="{{ affiliation.website }}"><em>{{ affiliation.title }}</em></a></li>
+        {% else %}
+          <li><em>{{ affiliation.title }}</em></li>
+        {% endif %}
+        <li>{{ affiliation.institution.dpt }}, {{ affiliation.institution.inst }}</li>
+        <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
+      </ul>
+    {% endfor %}
+    <hr>
+    {% if author_detail.orcid %}
+      <code>orcid: <a href="https://orcid.org/{{ author_detail.orcid }}">{{ author_detail.orcid }}</a></code><br>
+    {% endif %}
+    {% if author_detail.pgp %}
+      <code>pgp: {{ author_detail.pgp }}</code>
+    {% endif %}
+    </div>
+    <div class="container">
+    {% if author_detail.vita %}
+      <hr>
+      <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
+    {% endif %}
+    <p>{{ author_detail.formatted_markdown|safe }}</p>
+    </div>
 </div>
 <div class="row">
   <div id="author_map" class="col-md-10 offset-md-1 d-none d-md-block">

@@ -14,6 +14,16 @@ class Author(models.Model):
     middle = models.CharField(max_length=50, blank=True)
     last = models.CharField(max_length=50)
     email = models.EmailField()
+    GENDERS = [
+        ('M', 'He/him/his'),
+        ('W', 'She/her/hers'),
+        ('T', 'They/them/theirs'),
+    ]
+    pronouns = models.CharField(
+        max_length=1,
+        choices=GENDERS,
+        default='T',
+    )
     desc = MarkdownxField(max_length=1000, blank=True)
     photo = models.ImageField(null=True, upload_to = 'authors/images/%Y/%m/%d')
     orcid = models.CharField(max_length=19, null=True)

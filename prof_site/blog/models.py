@@ -25,10 +25,10 @@ class Author(models.Model):
         default='T',
     )
     desc = MarkdownxField(max_length=1000, blank=True)
-    photo = models.ImageField(null=True, upload_to = 'authors/images/%Y/%m/%d')
-    orcid = models.CharField(max_length=19, null=True)
-    pgp = models.CharField(max_length=50, null=True)
-    twitter = models.CharField(max_length=50, null=True)
+    photo = models.ImageField(null=True, blank=True, upload_to = 'authors/images/%Y/%m/%d')
+    orcid = models.CharField(max_length=19, blank=True)
+    pgp = models.CharField(max_length=50, blank=True)
+    twitter = models.CharField(max_length=50, blank=True)
     photo_gray = ImageSpecField(source='photo',
         processors=[
             Adjust(color=0,contrast=1.5, brightness=1.5),

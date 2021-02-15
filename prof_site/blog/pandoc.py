@@ -9,7 +9,7 @@ top-level-division: section
 """
 
 def pandocify(content, csl, bib):
-    if len(bib) > 0:
+    if bib:
         filters = ['pandoc-citeproc']
         extra_args = ['--mathjax',
                  '--smart',

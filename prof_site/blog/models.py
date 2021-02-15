@@ -24,7 +24,7 @@ class Author(models.Model):
         choices=GENDERS,
         default='T',
     )
-    desc = MarkdownxField(max_length=1000, blank=True)
+    desc = MarkdownxField(blank=True)
     photo = models.ImageField(null=True, blank=True, upload_to = 'authors/images/%Y/%m/%d')
     orcid = models.CharField(max_length=19, blank=True)
     pgp = models.CharField(max_length=50, blank=True)
@@ -77,7 +77,7 @@ class Author(models.Model):
         return self.full_name
 
 class Institution(models.Model):
-    dpt = models.CharField(max_length=150, null=True)
+    dpt = models.CharField(max_length=150, null=False, blank=True)
     inst = models.CharField(max_length=150)
     affiliates = models.ManyToManyField(Author, through='Affiliation')
     city = models.CharField(max_length=100)
@@ -93,7 +93,7 @@ class Affiliation(models.Model):
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
     primary = models.BooleanField(default=False)
     title = models.CharField(max_length=150)
-    website = models.URLField(null=True)
+    website = models.URLField(null=False, blank=True)
 
     def __str__(self):
         return self.title

@@ -24,7 +24,7 @@
         {% else %}
           <li><em>{{ affiliation.title }}</em></li>
         {% endif %}
-        <li>{{ affiliation.institution.dpt }}, {{ affiliation.institution.inst }}</li>
+        <li>{% if affiliation.institution.dpt %}{{ affiliation.institution.dpt }}, {% endif %}{{ affiliation.institution.inst }}</li>
         <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
       </ul>
     {% endfor %}

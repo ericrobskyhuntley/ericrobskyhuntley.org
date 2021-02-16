@@ -9,14 +9,27 @@ from django.core.serializers import serialize
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, ResizeToCover, Adjust, ColorOverlay, SmartResize
 
+class Institution(models.Model):
+    dpt = models.CharField(max_length=150, null=False, blank=True)
+    inst = models.CharField(max_length=150)
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    country = models.CharField(max_length=100)
+    location = models.PointField()
+
+    def __str__(self):
+        return self.dpt
+
 class Author(models.Model):
     first = models.CharField(max_length=50)
-    middle = models.CharField(max_length=50, blank=True)
+    middle = models.CharField(max_length=50, blank=True, default='')
     last = models.CharField(max_length=50)
-    email = models.EmailField()
+    email = models.EmailField(blank=True, default='')
     GENDERS = [
         ('M', 'He/him/his'),
         ('W', 'She/her/hers'),
+        ('N', 'He/him/his or They/them/theirs'),
+        ('H', 'She/her/hers or They/them/theirs'),
         ('T', 'They/them/theirs'),
     ]
     pronouns = models.CharField(
@@ -24,11 +37,35 @@ class Author(models.Model):
         choices=GENDERS,
         default='T',
     )
+    CREDS = [
+        ('MCP', 'Master of City Planning'),
+        ('PhD', 'Doctor of Philosophy'),
+        ('MUP', 'Master of Urban Planning'),
+        ('MURP', 'Master of Urban and Regional Planning'),
+        ('MFA', 'Master of Fine Arts'),
+        ('MLA', 'Master of Landscape Architecture'),
+        ('MArch', 'Master of Architecture'),
+        ('MBA', 'Master of Business Administration'),
+        ('MPA', 'Master of Public Administration'),
+        ('MDes', 'Master of Design Studies'),
+        ('DDes', 'Doctor of Design'),
+        ('', 'None'),
+    ]
+    cred = models.CharField(
+        max_length = 5,
+        choices = CREDS,
+        blank=True,
+        default=''
+    )
     desc = MarkdownxField(blank=True)
     photo = models.ImageField(null=True, blank=True, upload_to = 'authors/images/%Y/%m/%d')
     orcid = models.CharField(max_length=19, blank=True)
     pgp = models.CharField(max_length=50, blank=True)
     twitter = models.CharField(max_length=50, blank=True)
+    gitlab = models.CharField(max_length=25, blank=True, default='')
+    github = models.CharField(max_length=25, blank=True, default='')
+    zotero = models.CharField(max_length=25, blank=True, default='')
+    linkedin = models.CharField(max_length=25, blank=True, default='')
     photo_gray = ImageSpecField(source='photo',
         processors=[
             Adjust(color=0,contrast=1.5, brightness=1.5),
@@ -44,6 +81,7 @@ class Author(models.Model):
         always_update=False, 
         max_length=150
     )
+    affil = models.ManyToManyField(Institution, through='Affiliation')
     vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
     page = models.BooleanField(default=False)
     @property
@@ -75,18 +113,6 @@ class Author(models.Model):
 
     def __str__(self):
         return self.full_name
-
-class Institution(models.Model):
-    dpt = models.CharField(max_length=150, null=False, blank=True)
-    inst = models.CharField(max_length=150)
-    affiliates = models.ManyToManyField(Author, through='Affiliation')
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    location = models.PointField()
-
-    def __str__(self):
-        return self.dpt
 
 class Affiliation(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

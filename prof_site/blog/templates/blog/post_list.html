@@ -1,71 +1,67 @@
 {% extends "blog/base.html" %}
-
 {% block content %}
-  {% if latest_post_list %}
-    {% for post in latest_post_list %}
-      {% if forloop.first %}
-        <div class="row lead-article">
-          <div class = "jumbotron post-banner" style = "background-image:url({{post.banner_reduced.url}})">
-            <div class="container">
-              <div class = "col-md-10 offset-md-1 col-sm-10 offset-sm-1 post-banner-text">
-                <h4>{{ post.date }}</h4>
-                <hr>
-                <h1 class="display-4"><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h1>
-                <hr>
-                <ul class="list-inline">
-                {% for author in post.authors.all %}
-                  <li class="list-inline-item">
-                    {% if author.page %}
-                      <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
-                    {% else %}
-                      {{ author.full_name }}
-                    {% endif %}
-                  </li>
-                {% endfor %}
-                </ul>
-                <p>{{ post.pandoc_process|safe|truncatewords:50 }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="container">
-        <div class="row article">
-          <div class = "col-md-7 offset-md-1 col-sm-10 offset-sm-1 card-back">
-            <div class = "col-md-12">
-              {% else %}
-              <h5>{{ post.date }}</h5>
-              <h2 class="display-6">
-                <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
-              </h2>
-              <ul class="list-inline">
-                {% for author in post.authors.all %}
-                  <li class="list-inline-item">
-                    {% if author.page %}
-                      <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
-                    {% else %}
-                      {{ author.full_name }}
-                    {% endif %}
-                  </li>
-                {% endfor %}
-              </ul>
-              <img src="{{post.banner_reduced.url}}" />
-              <hr class="article-break">
-      {% endif %}
-    {% endfor %}
-            </div>
-          </div>
-          <div class="sticky-top col-md-3 d-none d-md-block">
-            <div id="events-col" class="sticky-top">
-            <h2>Upcoming Events</h2>
-            <hr>
-            <ul class="list-unstyled">
-              <li>No upcoming events.</li>
-              <li></li>
-            </ul>
-          </div>
-          </div>
-  {% else %}
-      <p>No posts to display.</p>
-  {% endif %}
+
+{% if first %}
+<div class="row lead-article">
+  <div class = "jumbotron post-banner" style = "background-image:url({{first.banner_reduced.url}})">
+    <div class="container">
+      <div class = "col-md-10 offset-md-1 col-sm-10 offset-sm-1 post-banner-text">
+        <h4>{{ first.date }}</h4>
+        <hr>
+        <h1 class="display-4"><a href="{% url 'blog:post_detail' first.slug %}">{{ first.title }}</a></h1>
+        <hr>
+        <ul class="list-inline">
+        {% for author in first.authors.all %}
+          <li class="list-inline-item">
+            {% if author.page %}
+              <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+            {% else %}
+              {{ author.full_name }}
+            {% endif %}
+          </li>
+        {% endfor %}
+        </ul>
+        <p>{{ first.pandoc_process|safe|truncatewords:50 }}</p>
+      </div>
+    </div>
   </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-md-7 offset-md-1 col-sm-10 offset-sm-1">
+    {% if latest_post_list %}
+        {% include page_template %}
+    {% else %}
+        <p>No posts to display.</p>
+    {% endif %}
+    </div>
+    <div class="sticky-top col-md-3 d-none d-md-block">
+    <div id="events-col" class="sticky-top">
+        <h2>Upcoming Events</h2>
+        <ul class="list-unstyled">
+        {% if events %}
+            {% for event in events%}
+            <li><h5>{{ event.title }}</h5></li>
+            <li>{% for p in event.venue.all %} <a href="{{p.website}}">{{ p.dpt }}</a>{%if not forloop.last%}, {% endif %}{% endfor %}</li>
+            <li>{{ event.day }}</li>
+            <li><code>{{ event.start|time:"H:i" }}–{{ event.end|time:"H:i" }}</code></li>
+            <hr>
+            {% endfor %}
+        {% else %}
+        <li>No upcoming events.</li>
+        {% endif %}
+        </ul>
+    </div>
+    </div>
+</div>
+{% block js %}
+    {% comment %} {{ block.super }} {% endcomment %}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{{ STATIC_URL }}/static/el-pagination/js/el-pagination.js"></script>
+    <script>$.endlessPaginate({
+            paginateOnScroll: true,
+            paginateOnScrollMargin: 2500
+        });</script>
+{% endblock %}
+
 {% endblock%}

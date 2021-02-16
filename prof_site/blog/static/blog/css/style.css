@@ -249,3 +249,9 @@ code {
 .jumbotron {
   border-radius: 0px;
 }
+
+figcaption {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+}

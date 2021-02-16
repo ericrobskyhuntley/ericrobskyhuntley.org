@@ -1,0 +1,30 @@
+{% load el_pagination_tags %}
+
+{% paginate latest_post_list %}
+{% for post in latest_post_list %}
+<div class="row article">
+  <div class = "card-back">
+    <div class = "col-md-12">
+      <h5>{{ post.date }}</h5>
+      <h2 class="display-6">
+        <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+      </h2>
+      <ul class="list-inline">
+        {% for author in post.authors.all %}
+        <li class="list-inline-item">
+          {% if author.page %}
+            <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+          {% else %}
+            {{ author.full_name }}
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      <img src="{{post.banner_reduced.url}}" />
+      <p>{{ post.pandoc_process|safe|truncatewords:50 }}</p>
+      <hr class="article-break">
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% show_more %}

@@ -15,6 +15,7 @@ class Institution(models.Model):
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    website = models.URLField(null=False, blank=True, default='')
     location = models.PointField()
 
     def __str__(self):
@@ -229,13 +230,7 @@ class Event(models.Model):
     desc = MarkdownxField()
     participant = models.ManyToManyField(Author, through='Role')
     virtual_url = models.URLField(blank=True, default='')
-    cost = models.DecimalField(
-        max_digits=6, 
-        decimal_places=2, 
-        null=False,
-    )
-    ticket_url = models.URLField(blank=True, default='')
-    venue = models.ForeignKey(Institution, blank=True, null=True, on_delete=models.SET_NULL)
+    venue = models.ManyToManyField(Institution, blank=True)
     cancel = models.BooleanField(default=False)
 
     class Meta:
@@ -252,7 +247,7 @@ class Role(models.Model):
         ('D', 'Discussant'),
         ('M', 'Moderator'),
         ('P', 'Panelist'),
-        ('L', 'Lecturer'),
+        ('R', 'Presenter'),
         ('I', 'Introducer'),
         ('W', 'Workshop Leader')
     ]

@@ -219,3 +219,52 @@ class CitationStyle(models.Model):
 
     def __str__(self):
         return self.name
+
+class Event(models.Model):
+    banner = models.ImageField(null=True, blank=True, upload_to = 'events/banners/%Y/%m/%d')
+    day = models.DateField()
+    start = models.TimeField()
+    end = models.TimeField()
+    title = models.CharField(max_length=100)
+    desc = MarkdownxField()
+    participant = models.ManyToManyField(Author, through='Role')
+    virtual_url = models.URLField(blank=True, default='')
+    cost = models.DecimalField(
+        max_digits=6, 
+        decimal_places=2, 
+        null=False,
+    )
+    ticket_url = models.URLField(blank=True, default='')
+    venue = models.ForeignKey(Institution, blank=True, null=True, on_delete=models.SET_NULL)
+    cancel = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "event"
+        verbose_name_plural = "events"
+
+    def __str__(self):
+        return self.title
+
+class Role(models.Model):
+    participant = models.ForeignKey(Author, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    ROLES = [
+        ('D', 'Discussant'),
+        ('M', 'Moderator'),
+        ('P', 'Panelist'),
+        ('L', 'Lecturer'),
+        ('I', 'Introducer'),
+        ('W', 'Workshop Leader')
+    ]
+    role = models.CharField(
+        max_length=1,
+        choices=ROLES,
+        default='L',
+    )
+
+    class Meta:
+        verbose_name = "role"
+        verbose_name_plural = "roles"
+    
+    def __str__(self):
+        return self.role

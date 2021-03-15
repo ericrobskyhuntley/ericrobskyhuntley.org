@@ -41,7 +41,7 @@
         <ul class="list-unstyled">
         {% if events %}
             {% for event in events%}
-            <li><h5>{{ event.title }}</h5></li>
+            <li><a href="{% if event.website %}{{ event.website }}{% else %}#{% endif %}"><h5>{{ event.title }}</h5></a></li>
             <li>{% for p in event.host.all %} <a href="{{p.website}}">{{ p.name }}</a>{%if not forloop.last%}, {% endif %}{% endfor %}</li>
             <li>{{ event.day }}</li>
             <li><code>{{ event.start|time:"H:i" }}–{{ event.end|time:"H:i" }}</code></li>

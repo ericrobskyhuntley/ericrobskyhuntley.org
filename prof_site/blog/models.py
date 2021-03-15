@@ -296,6 +296,7 @@ class Event(models.Model):
     start = models.TimeField()
     end = models.TimeField()
     title = models.CharField(max_length=100)
+    website = models.URLField(blank=True, default='')
     desc = MarkdownxField()
     participant = models.ManyToManyField(Person, through='Role')
     virtual_url = models.URLField(blank=True, default='')

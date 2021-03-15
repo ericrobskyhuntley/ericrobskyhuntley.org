@@ -10,16 +10,24 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, ResizeToCover, Adjust, ColorOverlay, SmartResize
 
 class Institution(models.Model):
-    dpt = models.CharField(max_length=150, null=False, blank=True)
-    inst = models.CharField(max_length=150)
+    name = models.CharField(
+        help_text="Name of the institution.",
+        max_length=150, 
+        null=False, 
+        blank=False
+    )
+    address = models.CharField(max_length=200, null=False, blank=True, default='')
+    room = models.CharField(max_length=20, null=False, blank=True, default='')
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=100)
+    postal = models.CharField(max_length=20)
     country = models.CharField(max_length=100)
     website = models.URLField(null=False, blank=True, default='')
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     location = models.PointField()
 
     def __str__(self):
-        return self.dpt
+        return self.name
 
 class Person(models.Model):
     first = models.CharField(max_length=50)
@@ -59,6 +67,7 @@ class Person(models.Model):
         default=''
     )
     desc = MarkdownxField(blank=True)
+    website = models.URLField(null=False, blank=True, default='') 
     photo = models.ImageField(null=True, blank=True, upload_to = 'authors/images/%Y/%m/%d')
     orcid = models.CharField(max_length=19, blank=True)
     pgp = models.CharField(max_length=50, blank=True)
@@ -115,13 +124,73 @@ class Person(models.Model):
     def __str__(self):
         return self.full_name
 
-class Affiliation(models.Model):
-    author = models.ForeignKey(Person, on_delete=models.CASCADE)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
-    primary = models.BooleanField(default=False)
-    title = models.CharField(max_length=150)
-    website = models.URLField(null=False, blank=True)
+    
+class Education(models.Model):
+    start = models.DateField(null=False, blank=False)
+    end = models.DateField(null=True, blank=True)
+    terminal = models.BooleanField(default=False)
+    concentration = models.CharField(max_length=150, blank=True)
+    desc = MarkdownxField(blank=True)
+    committee = models.ManyToManyField(Person, through='Committee_Membership')
+    show = models.BooleanField(default=True)
+    DEGREES = [
+        ('MCP', 'Master of City Planning'),
+        ('PhD', 'Doctor of Philosophy'),
+        ('MUP', 'Master of Urban Planning'),
+        ('MURP', 'Master of Urban and Regional Planning'),
+        ('MFA', 'Master of Fine Arts'),
+        ('MLA', 'Master of Landscape Architecture'),
+        ('MArch', 'Master of Architecture'),
+        ('MBA', 'Master of Business Administration'),
+        ('MPA', 'Master of Public Administration'),
+        ('MDes', 'Master of Design Studies'),
+        ('DDes', 'Doctor of Design'),
+        ('BFA', 'Bachelor of Fine Arts'),
+        ('BA', 'Bachelor of Arts'),
+        ('BS', 'Bachelor of Science'),
+        ('GC', 'Graduate Certificate'),
+        ('UC', 'Undergraduate Certificate'),
+        ('', 'None'),
+    ]
+    degree = models.CharField(
+        max_length = 5,
+        choices = DEGREES,
+        blank=True,
+        default=''
+    )
 
+    def __str__(self):
+        return self.degree + ' ' + self.concentration
+
+class Committee_Membership(models.Model):
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    education = models.ForeignKey(Education, on_delete=models.CASCADE)
+    chair = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.person.full_name + ', ' + self.education.degree
+
+class Affiliation(models.Model):
+    start = models.DateField(null=False, blank=False)
+    end = models.DateField(null=True, blank=True)
+    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, null=True)
+    primary = models.BooleanField(default=False)
+    title = models.CharField(max_length=150, blank=True)
+    website = models.URLField(null=False, blank=True)
+    KINDS = [
+        ('App', 'Appointment'),
+        ('Aff', 'Affiliation'),
+        ('', 'None'),
+    ]
+    kind = models.CharField(
+        max_length = 5,
+        choices = KINDS,
+        blank = True,
+        default = ''
+    )
+    desc = MarkdownxField(blank=True)
+    show = models.BooleanField(default=False)
     def __str__(self):
         return self.title
 
@@ -230,7 +299,7 @@ class Event(models.Model):
     desc = MarkdownxField()
     participant = models.ManyToManyField(Person, through='Role')
     virtual_url = models.URLField(blank=True, default='')
-    venue = models.ManyToManyField(Institution, blank=True)
+    host = models.ManyToManyField(Institution, blank=True)
     cancel = models.BooleanField(default=False)
 
     class Meta:

@@ -24,7 +24,12 @@
         {% else %}
           <li><em>{{ affiliation.title }}</em></li>
         {% endif %}
-        <li>{% if affiliation.institution.dpt %}{{ affiliation.institution.dpt }}, {% endif %}{{ affiliation.institution.inst }}</li>
+        <li>{% if affiliation.institution.name %}{{ affiliation.institution.name }}{% endif %}
+        {% if affiliation.institution.parent %}| {{ affiliation.institution.parent.name }}{% endif %}
+        {% if affiliation.institution.parent.parent %}| {{ affiliation.institution.parent.parent.name }}{% endif %}
+        {% if affiliation.institution.parent.parent.parent %}| {{ affiliation.institution.parent.parent.parent.name }}{% endif %}
+        
+        {{ affiliation.institution.inst }}</li>
         <!-- <li>{{ affiliation.institution.loc_geojson }}</li> -->
       </ul>
     {% endfor %}

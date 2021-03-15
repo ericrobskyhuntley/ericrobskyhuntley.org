@@ -26,6 +26,10 @@ class Institution(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
     location = models.PointField()
 
+    class Meta:
+        verbose_name = "Institution"
+        verbose_name_plural = "Institutions"
+
     def __str__(self):
         return self.name
 
@@ -121,6 +125,10 @@ class Person(models.Model):
         """
         return '%s %s %s' % (self.first, self.middle, self.last)
 
+    class Meta:
+        verbose_name = "Person"
+        verbose_name_plural = "People"
+
     def __str__(self):
         return self.full_name
 
@@ -159,6 +167,10 @@ class Education(models.Model):
         default=''
     )
 
+    class Meta:
+        verbose_name = "Education"
+        verbose_name_plural = "Periods of Education"
+
     def __str__(self):
         return self.degree + ' ' + self.concentration
 
@@ -166,6 +178,10 @@ class Committee_Membership(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     education = models.ForeignKey(Education, on_delete=models.CASCADE)
     chair = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Committee Membership"
+        verbose_name_plural = "Committee Memberships"
 
     def __str__(self):
         return self.person.full_name + ', ' + self.education.degree
@@ -191,6 +207,11 @@ class Affiliation(models.Model):
     )
     desc = MarkdownxField(blank=True)
     show = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Affiliation"
+        verbose_name_plural = "Affiliation"
+
     def __str__(self):
         return self.title
 
@@ -280,12 +301,20 @@ class Post(models.Model):
             bib=biblio
         )
 
+    class Meta:
+        verbose_name = "Post"
+        verbose_name_plural = "Posts"
+
     def __str__(self):
         return self.title
 
 class CitationStyle(models.Model):
     name = models.CharField(max_length=50, unique=True)
     file = models.FileField(upload_to='citestyles/')
+
+    class Meta:
+        verbose_name = "Citation Style"
+        verbose_name_plural = "Citation Styles"
 
     def __str__(self):
         return self.name
@@ -304,8 +333,8 @@ class Event(models.Model):
     cancel = models.BooleanField(default=False)
 
     class Meta:
-        verbose_name = "event"
-        verbose_name_plural = "events"
+        verbose_name = "Event"
+        verbose_name_plural = "Events"
 
     def __str__(self):
         return self.title
@@ -328,8 +357,8 @@ class Role(models.Model):
     )
 
     class Meta:
-        verbose_name = "role"
-        verbose_name_plural = "roles"
+        verbose_name = "Role"
+        verbose_name_plural = "Roles"
     
     def __str__(self):
         return self.role

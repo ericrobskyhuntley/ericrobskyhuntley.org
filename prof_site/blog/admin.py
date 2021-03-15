@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.gis import admin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role
+from .models import Award, Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role
 
 class AffiliationInline(admin.TabularInline):
     model = Affiliation
@@ -26,6 +26,7 @@ class EventAdmin(admin.ModelAdmin):
     inlines = (RoleInline,)
 
 # Register your models here.
+admin.site.register(Award)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Affiliation)
 admin.site.register(Education, EducationAdmin)

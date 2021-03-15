@@ -1,6 +1,8 @@
 {% extends "blog/base.html" %}
 {% block content %}
 
-{{education}}
+{% for e in education %}
+{{e}}
+{% endfor %}
 
 {% endblock %}

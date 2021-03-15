@@ -93,7 +93,7 @@ class Migration(migrations.Migration):
                 ('attach', models.FileField(blank=True, default='', upload_to='attachments/')),
                 ('slug', autoslug.fields.AutoSlugField(default=None, editable=False, max_length=150, null=True, populate_from='title')),
                 ('authors', models.ManyToManyField(to='blog.Author')),
-                ('csl', models.ForeignKey(null=True, on_delete='CASCADE', to='blog.CitationStyle')),
+                ('csl', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='blog.CitationStyle')),
             ],
         ),
         migrations.CreateModel(

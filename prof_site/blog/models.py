@@ -15,20 +15,91 @@ class Institution(models.Model):
         max_length=150, 
         null=False, 
         blank=False
-    )
-    address = models.CharField(max_length=200, null=False, blank=True, default='')
-    room = models.CharField(max_length=20, null=False, blank=True, default='')
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    postal = models.CharField(max_length=20)
-    country = models.CharField(max_length=100)
-    website = models.URLField(null=False, blank=True, default='')
-    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL)
+        )
+    address = models.CharField(
+        max_length=200, 
+        null=False, 
+        blank=True, 
+        default=''
+        )
+    room = models.CharField(
+        max_length=20, 
+        null=False, 
+        blank=True, 
+        default=''
+        )
+    city = models.CharField(
+        max_length=100
+        )
+    state = models.CharField(
+        max_length=100
+        )
+    postal = models.CharField(
+        max_length=20
+        )
+    country = models.CharField(
+        max_length=100
+        )
+    website = models.URLField(
+        null=False, 
+        blank=True, 
+        default=''
+        )
+    parent = models.ForeignKey(
+        'self', 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL
+        )
     location = models.PointField()
 
     class Meta:
         verbose_name = "Institution"
         verbose_name_plural = "Institutions"
+
+    def __str__(self):
+        return self.name
+
+class Award(models.Model):
+    start = models.DateField(null=False, blank=False)
+    end = models.DateField(null=True, blank=True)
+    name = models.CharField(
+        help_text="Name of the award.",
+        max_length=200, 
+        null=False, 
+        blank=False
+        )
+    KINDS = [
+        ('A', 'Awards and Honors'),
+        ('F', 'Funding'),
+        ('', 'None')
+    ]
+    kind = models.CharField(
+        max_length = 3,
+        choices = KINDS,
+        null = False,
+        blank = True,
+        default = ''
+    )
+    amount = models.IntegerField(null=True, blank=True)
+    CURRENCY = [
+        ('CAD', 'Canadian Dollar'),
+        ('USD', 'United States Dollar'),
+    ]
+    currency = models.CharField(
+        max_length = 3,
+        choices = CURRENCY,
+        null = False,
+        blank = True,
+        default = 'USD'
+    )
+    grantees = models.ManyToManyField(Institution, null=False, blank=True)
+    grantor = models.ForeignKey(Institution, null = True, on_delete = models.SET_NULL, related_name='grantor')
+    show = models.BooleanField(null=False, default=True)
+
+    class Meta:
+        verbose_name = "Award"
+        verbose_name_plural = "Awards"
 
     def __str__(self):
         return self.name
@@ -51,17 +122,17 @@ class Person(models.Model):
         default='T',
     )
     CREDS = [
-        ('MCP', 'Master of City Planning'),
-        ('PhD', 'Doctor of Philosophy'),
-        ('MUP', 'Master of Urban Planning'),
-        ('MURP', 'Master of Urban and Regional Planning'),
-        ('MFA', 'Master of Fine Arts'),
-        ('MLA', 'Master of Landscape Architecture'),
-        ('MArch', 'Master of Architecture'),
-        ('MBA', 'Master of Business Administration'),
-        ('MPA', 'Master of Public Administration'),
-        ('MDes', 'Master of Design Studies'),
-        ('DDes', 'Doctor of Design'),
+        ('MCP', 'M. City Planning'),
+        ('PhD', 'Ph.D.'),
+        ('MUP', 'M. Urban Planning'),
+        ('MURP', 'M. Urban and Regional Planning'),
+        ('MFA', 'M. Fine Arts'),
+        ('MLA', 'M. Landscape Architecture'),
+        ('MArch', 'M. Architecture'),
+        ('MBA', 'M. Business Administration'),
+        ('MPA', 'M. Public Administration'),
+        ('MDes', 'M. Design Studies'),
+        ('DDes', 'D.Des.'),
         ('', 'None'),
     ]
     cred = models.CharField(
@@ -98,6 +169,7 @@ class Person(models.Model):
     affil = models.ManyToManyField(Institution, through='Affiliation')
     vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
     page = models.BooleanField(default=False)
+    main = models.BooleanField(default=False)
     @property
     def formatted_markdown(self):
         return markdownify(self.desc)
@@ -123,7 +195,14 @@ class Person(models.Model):
         """
         Returns full name.
         """
-        return '%s %s %s' % (self.first, self.middle, self.last)
+        t = ''
+        if self.first:
+            t = t + self.first + ' '
+        if self.middle:
+            t = t + self.middle + ' '
+        if self.last:
+            t = t + self.last
+        return t
 
     class Meta:
         verbose_name = "Person"
@@ -143,20 +222,20 @@ class Education(models.Model):
     committee = models.ManyToManyField(Person, through='Committee_Membership')
     show = models.BooleanField(default=True)
     DEGREES = [
-        ('MCP', 'Master of City Planning'),
-        ('PhD', 'Doctor of Philosophy'),
-        ('MUP', 'Master of Urban Planning'),
-        ('MURP', 'Master of Urban and Regional Planning'),
-        ('MFA', 'Master of Fine Arts'),
-        ('MLA', 'Master of Landscape Architecture'),
-        ('MArch', 'Master of Architecture'),
-        ('MBA', 'Master of Business Administration'),
-        ('MPA', 'Master of Public Administration'),
-        ('MDes', 'Master of Design Studies'),
-        ('DDes', 'Doctor of Design'),
-        ('BFA', 'Bachelor of Fine Arts'),
-        ('BA', 'Bachelor of Arts'),
-        ('BS', 'Bachelor of Science'),
+        ('MCP', 'M. City Planning'),
+        ('PhD', 'Ph.D.'),
+        ('MUP', 'M. Urban Planning'),
+        ('MURP', 'M. Urban and Regional Planning'),
+        ('MFA', 'M. Fine Arts'),
+        ('MLA', 'M. Landscape Architecture'),
+        ('MArch', 'M. Architecture'),
+        ('MBA', 'M. Business Administration'),
+        ('MPA', 'M. Public Administration'),
+        ('MDes', 'M. Design Studies'),
+        ('DDes', 'D.Des.'),
+        ('BFA', 'B. Fine Arts'),
+        ('BA', 'B. Arts'),
+        ('BS', 'B. Science'),
         ('GC', 'Graduate Certificate'),
         ('UC', 'Undergraduate Certificate'),
         ('', 'None'),
@@ -266,7 +345,7 @@ class Post(models.Model):
     csl = models.ForeignKey(
         'CitationStyle',
         null=True,
-        on_delete='CASCADE'
+        on_delete=models.CASCADE
     )
     bib = models.FileField(upload_to='bibs/', blank=True)
     attach = models.FileField(upload_to='attachments/', blank=True, default='')

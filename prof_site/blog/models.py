@@ -21,7 +21,7 @@ class Institution(models.Model):
     def __str__(self):
         return self.dpt
 
-class Author(models.Model):
+class Person(models.Model):
     first = models.CharField(max_length=50)
     middle = models.CharField(max_length=50, blank=True, default='')
     last = models.CharField(max_length=50)
@@ -116,7 +116,7 @@ class Author(models.Model):
         return self.full_name
 
 class Affiliation(models.Model):
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(Person, on_delete=models.CASCADE)
     institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
     primary = models.BooleanField(default=False)
     title = models.CharField(max_length=150)
@@ -158,7 +158,7 @@ class Post(models.Model):
     content = MarkdownxField()
     timestamp = models.DateTimeField()
     content_type = models.CharField(max_length=150)
-    authors = models.ManyToManyField(Author)
+    authors = models.ManyToManyField(Person)
     banner = models.ImageField(null=True, upload_to = 'posts/banners/%Y/%m/%d')
     banner_thumb = ImageSpecField(
         source='banner',
@@ -228,7 +228,7 @@ class Event(models.Model):
     end = models.TimeField()
     title = models.CharField(max_length=100)
     desc = MarkdownxField()
-    participant = models.ManyToManyField(Author, through='Role')
+    participant = models.ManyToManyField(Person, through='Role')
     virtual_url = models.URLField(blank=True, default='')
     venue = models.ManyToManyField(Institution, blank=True)
     cancel = models.BooleanField(default=False)
@@ -241,7 +241,7 @@ class Event(models.Model):
         return self.title
 
 class Role(models.Model):
-    participant = models.ForeignKey(Author, on_delete=models.CASCADE)
+    participant = models.ForeignKey(Person, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ROLES = [
         ('D', 'Discussant'),

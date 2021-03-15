@@ -2,28 +2,24 @@ from django.contrib import admin
 from django.contrib.gis import admin
 from markdownx.admin import MarkdownxModelAdmin
 
-from .models import Author, Post, Institution, Affiliation, UrbanArea, CitationStyle, Event, Role
+from .models import Person, Post, Institution, Affiliation, UrbanArea, CitationStyle, Event, Role
 
 class AffiliationInline(admin.TabularInline):
     model = Affiliation
     extra = 1
 
-class AuthorAdmin(admin.ModelAdmin):
+class PersonAdmin(admin.ModelAdmin):
     inlines = (AffiliationInline,)
 
 class RoleInline(admin.TabularInline):
     model = Role
     extra = 1
 
-# class ParticipantInline(admin.TabularInline):
-#     model = Author
-#     extra = 1
-
 class EventAdmin(admin.ModelAdmin):
     inlines = (RoleInline,)
 
 # Register your models here.
-admin.site.register(Author, AuthorAdmin)
+admin.site.register(Person, PersonAdmin)
 admin.site.register(Affiliation)
 admin.site.register(UrbanArea)
 admin.site.register(Event, EventAdmin)

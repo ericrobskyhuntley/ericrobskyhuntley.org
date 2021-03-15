@@ -4,7 +4,7 @@ from django.views import generic
 from django.core.serializers import serialize
 from el_pagination.decorators import page_template
 
-from .models import Post, Author, UrbanArea, Land, Event
+from .models import Post, Person, UrbanArea, Land, Event
 
 from el_pagination.views import AjaxListView
 
@@ -28,10 +28,10 @@ class PostDetailView(generic.DetailView):
     template_name = 'blog/post_detail.html'
     context_object_name = 'post_detail'
 
-class AuthorDetailView(generic.DetailView):
-    model = Author
-    template_name = 'blog/author_detail.html'
-    context_object_name = 'author_detail'
+class PersonDetailView(generic.DetailView):
+    model = Person
+    template_name = 'blog/person_detail.html'
+    context_object_name = 'person_detail'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -13,7 +13,7 @@
             {% for author in post_detail.authors.all %}
             <li class="list-inline-item">
               {% if author.page %}
-                <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+                <a href="{% url 'blog:person_detail' author.slug %}">{{ author.full_name }}</a>
               {% else %}
                 {{ author.full_name }}
               {% endif %}
@@ -37,7 +37,7 @@
             {% if author.page %}
               <img class="author-photo" src="{{ author.photo.url }}"/><br>
               <ul class="list-unstyled">
-                <li><a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a></li>
+                <li><a href="{% url 'blog:person_detail' author.slug %}">{{ author.full_name }}</a></li>
                 <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
                 <li>{{ author.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
                 <hr>
@@ -46,7 +46,7 @@
             {% else %}
               <hr>
               <ul class="list-unstyled">
-                <li><a href="{% url 'blog:author_detail' author.slug %}"></a>{{ author.full_name }}</a></li>
+                <li><a href="{% url 'blog:person_detail' author.slug %}"></a>{{ author.full_name }}</a></li>
                 <li><code><a href="mailto:{{ author.email }}">{{ author.email }}</a></code></li>
                 <li>{{ author.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
                 <hr>

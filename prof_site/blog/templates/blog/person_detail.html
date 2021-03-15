@@ -5,19 +5,19 @@
 <div class="container">
   <div class="row">
     <div class="col-md-4 offset-md-1 col-sm-12">
-      <img class="author-photo" src="{{ author_detail.photo.url }}"/>
+      <img class="author-photo" src="{{ person_detail.photo.url }}"/>
     </div>
     <div class="col-md-6">
-    <h3>{{ author_detail.full_name }}</h3>
+    <h3>{{ person_detail.full_name }}</h3>
     <ul class="list-unstyled">
-      <li><code><a href="mailto:{{ author_detail.email }}">{{ author_detail.email }}</a></code></li>
-      {% if author_detail.twitter %}
-        <li><code><a href="https://twitter.com/{{author_detail.twitter }}">@{{author_detail.twitter }}</a></code></li>
+      <li><code><a href="mailto:{{ person_detail.email }}">{{ person_detail.email }}</a></code></li>
+      {% if person_detail.twitter %}
+        <li><code><a href="https://twitter.com/{{person_detail.twitter }}">@{{person_detail.twitter }}</a></code></li>
       {% endif %}
-      <li>{{ author_detail.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
+      <li>{{ person_detail.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
     </ul>
     <hr>
-    {% for affiliation in author_detail.sorted_affiliation %}
+    {% for affiliation in person_detail.sorted_affiliation %}
       <ul class="list-unstyled">
         {% if affiliation.website %}
           <li><a href="{{ affiliation.website }}"><em>{{ affiliation.title }}</em></a></li>
@@ -29,21 +29,21 @@
       </ul>
     {% endfor %}
     <hr>
-    {% if author_detail.orcid %}
-      <code>orcid: <a href="https://orcid.org/{{ author_detail.orcid }}">{{ author_detail.orcid }}</a></code><br>
+    {% if person_detail.orcid %}
+      <code>orcid: <a href="https://orcid.org/{{ person_detail.orcid }}">{{ person_detail.orcid }}</a></code><br>
     {% endif %}
-    {% if author_detail.pgp %}
-      <code>pgp: {{ author_detail.pgp }}</code>
+    {% if person_detail.pgp %}
+      <code>pgp: {{ person_detail.pgp }}</code>
     {% endif %}
     </div>
     <div class="container">
       <div class="row">
         <div class="col-md-10 offset-md-1 col-sm-12">
-          {% if author_detail.vita %}
+          {% if person_detail.vita %}
             <hr>
-            <a href="{{ author_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
+            <a href="{{ person_detail.vita.url }}"><button type="button" class="btn btn-primary btn-lg btn-block">Curriculum vita.</button></a>
           {% endif %}
-          <p>{{ author_detail.formatted_markdown|safe }}</p>
+          <p>{{ person_detail.formatted_markdown|safe }}</p>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@
     
   const path = d3.geoPath().projection(prj);
 
-  let affil_locs = {{author_detail.loc_geojson|safe}};
+  let affil_locs = {{person_detail.loc_geojson|safe}};
 
   let ua = {{ua_all|safe}};
   let land = {{land_all|safe}};

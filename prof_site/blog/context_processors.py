@@ -1,4 +1,4 @@
-from .models import Author
+from .models import Person
 
 def main_author(request):
-    return {'main_author': Author.objects.filter(id=1)[0]}
+    return {'main_author': Person.objects.filter(id=1)[0]}

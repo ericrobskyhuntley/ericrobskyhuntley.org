@@ -14,7 +14,7 @@
         {% for author in first.authors.all %}
           <li class="list-inline-item">
             {% if author.page %}
-              <a href="{% url 'blog:author_detail' author.slug %}">{{ author.full_name }}</a>
+              <a href="{% url 'blog:person_detail' author.slug %}">{{ author.full_name }}</a>
             {% else %}
               {{ author.full_name }}
             {% endif %}

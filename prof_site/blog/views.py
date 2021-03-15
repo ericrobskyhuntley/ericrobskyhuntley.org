@@ -4,9 +4,16 @@ from django.views import generic
 from django.core.serializers import serialize
 from el_pagination.decorators import page_template
 
-from .models import Post, Person, UrbanArea, Land, Event
+from .models import Post, Person, UrbanArea, Land, Event, Education, Affiliation
 
 from el_pagination.views import AjaxListView
+
+def vita_view(request):
+    education = Education.objects.values('institution').order_by('-end')
+    return render(request, 'blog/vita.html', {
+        'education': education
+        }
+    )
 
 class IndexView(AjaxListView):
     context_object_name = 'latest_post_list'

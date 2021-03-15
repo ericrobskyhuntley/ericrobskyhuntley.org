@@ -137,6 +137,7 @@ class Education(models.Model):
     start = models.DateField(null=False, blank=False)
     end = models.DateField(null=True, blank=True)
     terminal = models.BooleanField(default=False)
+    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
     concentration = models.CharField(max_length=150, blank=True)
     desc = MarkdownxField(blank=True)
     committee = models.ManyToManyField(Person, through='Committee_Membership')

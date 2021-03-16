@@ -93,7 +93,7 @@ class Award(models.Model):
         blank = True,
         default = 'USD'
     )
-    grantees = models.ManyToManyField(Institution, null=False, blank=True)
+    grantees = models.ManyToManyField(Institution, blank=True)
     grantor = models.ForeignKey(Institution, null = True, on_delete = models.SET_NULL, related_name='grantor')
     show = models.BooleanField(null=False, default=True)
 
@@ -175,8 +175,8 @@ class Person(models.Model):
         return markdownify(self.desc)
 
     @property
-    def sorted_affiliation(self):
-        return self.affiliation_set.order_by('-primary')
+    def current_affiliations(self):
+        return self.affiliation_set.filter(end = None).order_by('-primary')
 
     @property
     def primary_affiliation(self):

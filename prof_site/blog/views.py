@@ -9,6 +9,7 @@ from .models import Post, Person, UrbanArea, Land, Event, Education, Affiliation
 from django.http import HttpResponse, JsonResponse
 from .serializers import EducationSerializer, InstitutionSerializer, MainPersonSerializer, AffiliationSerializer, AwardSerializer
 
+from datetime import datetime, timedelta, time
 from el_pagination.views import AjaxListView
 
 def vita_view(request):
@@ -81,25 +82,3 @@ class PersonDetailView(generic.DetailView):
     model = Person
     template_name = 'blog/person_detail.html'
     context_object_name = 'person_detail'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['ua_all'] = serialize('geojson', 
-            UrbanArea.objects.all(),
-            fields=('geom')
-        )
-        context['land_all'] = serialize('geojson', 
-            Land.objects.all(), 
-            fields=('geom')
-        )
-        # context['bath_all'] = serialize(
-        #     'geojson', 
-        #     BathContours.objects.all(),
-        #     fields=('geom')
-        # )
-        # context['elev_all'] = serialize(
-        #     'geojson',
-        #     ElevContours.objects.all(),
-        #     fields=('geom')
-        # )
-        return context

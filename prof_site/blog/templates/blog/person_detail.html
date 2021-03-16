@@ -17,7 +17,7 @@
       <li>{{ person_detail.get_pronouns_display }}.<a href="https://uwm.edu/lgbtrc/support/gender-pronouns/">*</a></li>
     </ul>
     <hr>
-    {% for affiliation in person_detail.sorted_affiliation %}
+    {% for affiliation in person_detail.current_affiliations %}
       <ul class="list-unstyled">
         {% if affiliation.website %}
           <li><a href="{{ affiliation.website }}"><em>{{ affiliation.title }}</em></a></li>

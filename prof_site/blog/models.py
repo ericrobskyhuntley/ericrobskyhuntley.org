@@ -8,6 +8,8 @@ from django.utils.functional import cached_property
 from django.core.serializers import serialize
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, ResizeToCover, Adjust, ColorOverlay, SmartResize
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class Institution(models.Model):
     name = models.CharField(
@@ -327,7 +329,6 @@ class Post(models.Model):
     title = models.CharField(max_length=150)
     content = MarkdownxField()
     timestamp = models.DateTimeField()
-    content_type = models.CharField(max_length=150)
     authors = models.ManyToManyField(Person)
     banner = models.ImageField(null=True, upload_to = 'posts/banners/%Y/%m/%d')
     banner_thumb = ImageSpecField(
@@ -347,8 +348,12 @@ class Post(models.Model):
         null=True,
         on_delete=models.CASCADE
     )
+    content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
     bib = models.FileField(upload_to='bibs/', blank=True)
     attach = models.FileField(upload_to='attachments/', blank=True, default='')
+    attach_kind = models.CharField(max_length=150)
     slug = AutoSlugField(populate_from='title', 
         default=None,
         always_update=False, 

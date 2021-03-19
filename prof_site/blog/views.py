@@ -65,11 +65,11 @@ class IndexView(AjaxListView):
 
     def get_queryset(self):
         """Return the last ten published posts."""
-        return Post.objects.order_by('-timestamp')[1:]
+        return Post.objects.order_by('-display_datetime')[1:]
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['first'] = Post.objects.order_by('-display_date')[0]
+        context['first'] = Post.objects.order_by('-display_datetime')[0]
         context['events'] = Event.objects.order_by('day')
         return context
 

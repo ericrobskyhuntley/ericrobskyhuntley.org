@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis import admin
 from markdownx.admin import MarkdownxModelAdmin
-from .models import Award, Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role
+from .models import Award, Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role,SiteWideSetting
 
 class AffiliationInline(admin.TabularInline):
     model = Affiliation
@@ -36,6 +36,7 @@ admin.site.register(Affiliation)
 admin.site.register(Education, EducationAdmin)
 admin.site.register(Event, EventAdmin)
 admin.site.register(Role)
+admin.site.register(SiteWideSetting)
 admin.site.register(Institution, admin.OSMGeoAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(CitationStyle)

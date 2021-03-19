@@ -11,7 +11,14 @@ from imagekit.processors import ResizeToFill, ResizeToCover, Adjust, ColorOverla
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-class Institution(models.Model):
+class VersionClass(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+class Institution(VersionClass):
     name = models.CharField(
         help_text="Name of the institution.",
         max_length=150, 
@@ -62,14 +69,26 @@ class Institution(models.Model):
     def __str__(self):
         return self.name
 
-class Award(models.Model):
-    start = models.DateField(null=False, blank=False)
-    end = models.DateField(null=True, blank=True)
+class Award(VersionClass):
+    """
+    Describes awards and honors given to persons included
+    in Persons.
+    """
+    start = models.DateField(
+        help_text = "Start of the award term.",
+        null = False, 
+        blank = False
+        )
+    end = models.DateField(
+        help_text = "End of the award term.",
+        null = True, 
+        blank = True
+        )
     name = models.CharField(
-        help_text="Name of the award.",
-        max_length=200, 
-        null=False, 
-        blank=False
+        help_text = "Name of the award.",
+        max_length = 200, 
+        null = False, 
+        blank = False
         )
     KINDS = [
         ('A', 'Awards and Honors'),
@@ -77,27 +96,47 @@ class Award(models.Model):
         ('', 'None')
     ]
     kind = models.CharField(
+        help_text = "Make the distinction between funding and awards/honors.",
         max_length = 3,
         choices = KINDS,
         null = False,
         blank = True,
         default = ''
     )
-    amount = models.IntegerField(null=True, blank=True)
+    amount = models.IntegerField(
+        help_text = "The amount of money awarded, in its given currency (see next field).",
+        null=True, 
+        blank=True
+    )
     CURRENCY = [
         ('CAD', 'Canadian Dollar'),
         ('USD', 'United States Dollar'),
     ]
     currency = models.CharField(
+        help_text = "The currency in which the award/grant is given.",
         max_length = 3,
         choices = CURRENCY,
         null = False,
         blank = True,
         default = 'USD'
     )
-    grantees = models.ManyToManyField(Institution, blank=True)
-    grantor = models.ForeignKey(Institution, null = True, on_delete = models.SET_NULL, related_name='grantor')
-    show = models.BooleanField(null=False, default=True)
+    grantees = models.ManyToManyField(
+        Institution,
+        help_text = "All institutions who received the award/grant.", 
+        blank=True
+    )
+    grantor = models.ForeignKey(
+        Institution, 
+        help_text = "All institutions who received the award/grant.",
+        null = True, 
+        on_delete = models.SET_NULL, 
+        related_name='grantor'
+    )
+    show = models.BooleanField(
+        help_text = "Indicates the visibility of this award on the frontend.",
+        null=False, 
+        default=True
+    )
 
     class Meta:
         verbose_name = "Award"
@@ -106,7 +145,7 @@ class Award(models.Model):
     def __str__(self):
         return self.name
 
-class Person(models.Model):
+class Person(VersionClass):
     first = models.CharField(max_length=50)
     middle = models.CharField(max_length=50, blank=True, default='')
     last = models.CharField(max_length=50)
@@ -171,7 +210,6 @@ class Person(models.Model):
     affil = models.ManyToManyField(Institution, through='Affiliation')
     vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
     page = models.BooleanField(default=False)
-    main = models.BooleanField(default=False)
     @property
     def formatted_markdown(self):
         return markdownify(self.desc)
@@ -213,8 +251,27 @@ class Person(models.Model):
     def __str__(self):
         return self.full_name
 
+class SiteWideSetting(VersionClass):
+    csl = models.ForeignKey(
+        'CitationStyle',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    main_person = models.ForeignKey(Person, 
+        null=True, 
+        blank=True, 
+        on_delete=models.SET_NULL
+    )
+
+    class Meta:
+        verbose_name = "SiteWideSetting"
+        verbose_name_plural = "SiteWideSettings"
+
+    def __str__(self):
+        return self.csl.name + " " + self.main_person.full_name
     
-class Education(models.Model):
+class Education(VersionClass):
     start = models.DateField(null=False, blank=False)
     end = models.DateField(null=True, blank=True)
     terminal = models.BooleanField(default=False)
@@ -256,7 +313,7 @@ class Education(models.Model):
     def __str__(self):
         return self.degree + ' ' + self.concentration
 
-class Committee_Membership(models.Model):
+class Committee_Membership(VersionClass):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
     education = models.ForeignKey(Education, on_delete=models.CASCADE)
     chair = models.BooleanField(default=False)
@@ -268,27 +325,64 @@ class Committee_Membership(models.Model):
     def __str__(self):
         return self.person.full_name + ', ' + self.education.degree
 
-class Affiliation(models.Model):
-    start = models.DateField(null=False, blank=False)
-    end = models.DateField(null=True, blank=True)
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE, null=True)
-    primary = models.BooleanField(default=False)
-    title = models.CharField(max_length=150, blank=True)
-    website = models.URLField(null=False, blank=True)
+class Affiliation(VersionClass):
+    start = models.DateField(
+        help_text = "Start of the affiliation.",
+        null=False, 
+        blank=False
+    )
+    end = models.DateField(
+        help_text = """End of the affiliation 
+            (past affiliations will not be displayed on the front-end).""",
+        null=True, 
+        blank=True
+    )
+    person = models.ForeignKey(
+        Person,
+        help_text = "To which person does this affiliation apply?",
+        on_delete=models.CASCADE
+    )
+    institution = models.ForeignKey(
+        Institution, 
+        help_text = "To which institution is the person affiliated?",
+        on_delete=models.CASCADE, 
+        null=True
+    )
+    primary = models.BooleanField(
+        help_text = "Is this the person's primary affiliation?",
+        default=False
+    )
+    title = models.CharField(
+        help_text = "What is the person's title?",
+        max_length=150, 
+        blank=True
+    )
+    website = models.URLField(
+        help_text = "What is the website _connected to this affiliation_?",
+        null=False, 
+        blank=True
+    )
     KINDS = [
         ('App', 'Appointment'),
         ('Aff', 'Affiliation'),
         ('', 'None'),
     ]
     kind = models.CharField(
+        help_text = """Is this affiliation a formal (generally, paid) 
+            appointment or an affiliation?""",
         max_length = 5,
         choices = KINDS,
         blank = True,
         default = ''
     )
-    desc = MarkdownxField(blank=True)
-    show = models.BooleanField(default=False)
+    desc = MarkdownxField(
+        help_text = "Describe the affiliation.",
+        blank=True
+    )
+    show = models.BooleanField(
+        help_text = "Should this affiliation appear on the front-end?",
+        default=False
+    )
 
     class Meta:
         verbose_name = "Affiliation"
@@ -297,13 +391,13 @@ class Affiliation(models.Model):
     def __str__(self):
         return self.title
 
-class UrbanArea(models.Model):
+class UrbanArea(VersionClass):
     geom = models.MultiPolygonField()
 
     def __str__(self):
         return str(self.geom)
 
-class Land(models.Model):
+class Land(VersionClass):
     geom = models.MultiPolygonField()
     name = models.CharField(max_length=28)
 
@@ -311,24 +405,30 @@ class Land(models.Model):
         return str(self.geom)
 
 
-class BathContours(models.Model):
+class BathContours(VersionClass):
     geom = models.MultiLineStringField()
     depth = models.IntegerField()
 
     def __str__(self):
         return str(self.geom) 
 
-class ElevContours(models.Model):
+class ElevContours(VersionClass):
     geom = models.MultiLineStringField()
     elev = models.IntegerField()
 
     def __str__(self):
         return str(self.geom)
 
-class Post(models.Model):
-    title = models.CharField(max_length=150)
-    content = MarkdownxField()
-    timestamp = models.DateTimeField()
+class Post(VersionClass):
+    title = models.CharField(
+        help_text = "Post title (up to 150 chars).",
+        max_length=150
+    )
+    content = MarkdownxField(
+        help_text = """Post content (can include Pandoc citations 
+            if they appear in the bibliography).""",
+    )
+    display_datetime = models.DateTimeField()
     authors = models.ManyToManyField(Person)
     banner = models.ImageField(null=True, upload_to = 'posts/banners/%Y/%m/%d')
     banner_thumb = ImageSpecField(
@@ -342,11 +442,6 @@ class Post(models.Model):
         processors=[ResizeToCover(1920, 1080)],
         format='JPEG',
         options={'quality': 60}
-    )
-    csl = models.ForeignKey(
-        'CitationStyle',
-        null=True,
-        on_delete=models.CASCADE
     )
     content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField(null=True, blank=True)
@@ -366,23 +461,22 @@ class Post(models.Model):
 
     @property
     def date(self):
-        return self.timestamp.date()
+        return self.display_datetime.date()
 
     @property
     def time(self):
-        return self.timestamp.time()
+        return self.display_datetime.time()
 
     @cached_property
     def pandoc_process(self):
+        csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
         try:
             biblio=self.bib.url
-            cite=self.csl.file.url
         except:
             biblio=None
-            cite=None
         return pandocify(
             content=self.content,
-            csl=cite,
+            csl=csl,
             bib=biblio
         )
 
@@ -393,7 +487,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-class CitationStyle(models.Model):
+class CitationStyle(VersionClass):
     name = models.CharField(max_length=50, unique=True)
     file = models.FileField(upload_to='citestyles/')
 
@@ -404,7 +498,7 @@ class CitationStyle(models.Model):
     def __str__(self):
         return self.name
 
-class Event(models.Model):
+class Event(VersionClass):
     banner = models.ImageField(null=True, blank=True, upload_to = 'events/banners/%Y/%m/%d')
     day = models.DateField()
     start = models.TimeField()
@@ -424,7 +518,7 @@ class Event(models.Model):
     def __str__(self):
         return self.title
 
-class Role(models.Model):
+class Role(VersionClass):
     participant = models.ForeignKey(Person, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     ROLES = [

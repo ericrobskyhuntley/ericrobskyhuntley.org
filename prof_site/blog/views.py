@@ -15,7 +15,7 @@ from el_pagination.views import AjaxListView
 def vita_view(request):
     try:
         main_person = Person.objects.filter(
-            main=True
+            affiliation__primary=True
             ).all()
         education = Education.objects.filter(
             show=True
@@ -23,12 +23,12 @@ def vita_view(request):
         appointments = Affiliation.objects.filter(
             show=True,
             kind='App',
-            person__main=True
+            person__affiliation__primary=True
             ).order_by(F('end').desc(nulls_first=True))
         affiliations = Affiliation.objects.filter(
             show=True,
             kind='Aff',
-            person__main=True,
+            person__affiliation__primary=True,
             end=None
             ).order_by(F('end').desc(nulls_first=True))
         funding = Award.objects.filter(

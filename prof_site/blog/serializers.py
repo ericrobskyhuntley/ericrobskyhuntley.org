@@ -22,7 +22,7 @@ class MainPersonSerializer(serializers.ModelSerializer):
     class Meta:
         depth = 6
         model = Person
-        exclude = ['id', 'page', 'main', 'affil', 'first', 'middle', 'last']
+        exclude = ['id', 'page', 'affil', 'first', 'middle', 'last']
 
 class CommitteeSerializer(serializers.ModelSerializer):
     chair = serializers.ReadOnlyField()

@@ -5,7 +5,7 @@ class InstitutionSerializer(serializers.ModelSerializer):
     class Meta:
         depth = 6
         model = Institution
-        exclude = ['id']
+        exclude = ['id', 'created_at', 'modified_at']
 
 class AffiliationSerializer(serializers.ModelSerializer):
     start = serializers.DateField(format='%Y')
@@ -13,7 +13,7 @@ class AffiliationSerializer(serializers.ModelSerializer):
     institution = InstitutionSerializer()
     class Meta:
         model = Affiliation
-        exclude = ['id', 'primary', 'kind', 'show', 'person']
+        exclude = ['id', 'primary', 'kind', 'show', 'person', 'created_at', 'modified_at']
 
 class MainPersonSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField()
@@ -22,7 +22,7 @@ class MainPersonSerializer(serializers.ModelSerializer):
     class Meta:
         depth = 6
         model = Person
-        exclude = ['id', 'page', 'affil', 'first', 'middle', 'last']
+        exclude = ['id', 'page', 'affil', 'first', 'middle', 'last', 'created_at', 'modified_at']
 
 class CommitteeSerializer(serializers.ModelSerializer):
     chair = serializers.ReadOnlyField()
@@ -43,7 +43,7 @@ class EducationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Education
-        exclude = ['terminal', 'show', 'id']
+        exclude = ['terminal', 'show', 'id', 'created_at', 'modified_at']
 
 class AwardSerializer(serializers.ModelSerializer):
     grantor = InstitutionSerializer()
@@ -52,4 +52,4 @@ class AwardSerializer(serializers.ModelSerializer):
     end = serializers.DateField(format='%Y')
     class Meta:
         model = Award
-        exclude = ['id', 'show', 'kind']
+        exclude = ['id', 'show', 'kind', 'created_at', 'modified_at']

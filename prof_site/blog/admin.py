@@ -32,10 +32,8 @@ class PostAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Award)
 admin.site.register(Person, PersonAdmin)
-admin.site.register(Affiliation)
 admin.site.register(Education, EducationAdmin)
 admin.site.register(Event, EventAdmin)
-admin.site.register(Role)
 admin.site.register(SiteWideSetting)
 admin.site.register(Institution, admin.OSMGeoAdmin)
 admin.site.register(Post, PostAdmin)

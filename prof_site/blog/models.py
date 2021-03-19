@@ -12,6 +12,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 class VersionClass(models.Model):
+    """
+    Defines a default class with created at/modified at fields.
+    All the below models inherit this class.
+    """
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
@@ -24,43 +28,53 @@ class Institution(VersionClass):
         max_length=150, 
         null=False, 
         blank=False
-        )
+    )
     address = models.CharField(
+        help_text = "Address of the institution.",
         max_length=200, 
         null=False, 
         blank=True, 
         default=''
-        )
+    )
     room = models.CharField(
+        help_text = "Room at which the institution can be reached.",
         max_length=20, 
         null=False, 
         blank=True, 
         default=''
-        )
+    )
     city = models.CharField(
+        help_text = "City in which institution is located.",
         max_length=100
-        )
+    )
     state = models.CharField(
+        help_text = "State in which institution is located.",
         max_length=100
-        )
+    )
     postal = models.CharField(
+        help_text = "Postcode in which institution is located.",
         max_length=20
-        )
+    )
     country = models.CharField(
+        help_text = "Country in which institution is located.",
         max_length=100
-        )
+    )
     website = models.URLField(
+        help_text = "Institution's website.",
         null=False, 
         blank=True, 
         default=''
-        )
+    )
     parent = models.ForeignKey(
         'self', 
+        help_text = "Parent institution of institution (E.g., 'MIT' is the parent of 'DUSP').",
         null=True, 
         blank=True, 
         on_delete=models.SET_NULL
-        )
-    location = models.PointField()
+    )
+    location = models.PointField(
+        help_text = "Approximate location of institution.",
+    )
 
     class Meta:
         verbose_name = "Institution"
@@ -146,10 +160,29 @@ class Award(VersionClass):
         return self.name
 
 class Person(VersionClass):
-    first = models.CharField(max_length=50)
-    middle = models.CharField(max_length=50, blank=True, default='')
-    last = models.CharField(max_length=50)
-    email = models.EmailField(blank=True, default='')
+    """
+    Model describing a person, their (ugh) credentials, social, etc.
+    """
+    first = models.CharField(
+        help_text = "Person's given name.",
+        max_length=50
+    )
+    middle = models.CharField(
+        help_text = "Person's middle name(s).",
+        max_length=50, 
+        blank=True, 
+        default=''
+    )
+    last = models.CharField(
+        help_text = "Person's last name(s).",
+        max_length=50
+    )
+    email = models.EmailField(
+        help_text = """Personal email. Useful in the absence
+        of an affiliated email.""",
+        blank=True, 
+        default=''
+    )
     GENDERS = [
         ('M', 'He/him/his'),
         ('W', 'She/her/hers'),
@@ -158,6 +191,7 @@ class Person(VersionClass):
         ('T', 'They/them/theirs'),
     ]
     pronouns = models.CharField(
+        help_text = "Preferred pronouns.",
         max_length=1,
         choices=GENDERS,
         default='T',
@@ -177,21 +211,66 @@ class Person(VersionClass):
         ('', 'None'),
     ]
     cred = models.CharField(
+        help_text = "Display credential.",
         max_length = 5,
         choices = CREDS,
         blank=True,
         default=''
     )
-    desc = MarkdownxField(blank=True)
-    website = models.URLField(null=False, blank=True, default='') 
-    photo = models.ImageField(null=True, blank=True, upload_to = 'authors/images/%Y/%m/%d')
-    orcid = models.CharField(max_length=19, blank=True)
-    pgp = models.CharField(max_length=50, blank=True)
-    twitter = models.CharField(max_length=50, blank=True)
-    gitlab = models.CharField(max_length=25, blank=True, default='')
-    github = models.CharField(max_length=25, blank=True, default='')
-    zotero = models.CharField(max_length=25, blank=True, default='')
-    linkedin = models.CharField(max_length=25, blank=True, default='')
+    bio = MarkdownxField(
+        help_text = "Person's short biography.",
+        blank=True
+    )
+    website = models.URLField(
+        help_text = "Person's personal website (independent their affiliations).",
+        null=False, 
+        blank=True, 
+        default=''
+    ) 
+    photo = models.ImageField(
+        help_text = "Photo/headshot.",
+        null=True, 
+        blank=True, 
+        upload_to = 'authors/images/%Y/%m/%d'
+    )
+    orcid = models.CharField(
+        help_text = "Person's ORCID.",
+        max_length=19, 
+        blank=True
+    )
+    pgp = models.CharField(
+        help_text = "Person's PGP key.",
+        max_length=50, 
+        blank=True
+    )
+    twitter = models.CharField(
+        help_text = "Person's Twitter handle.",
+        max_length=50, 
+        blank=True
+    )
+    gitlab = models.CharField(
+        help_text = "Person's Gitlab handle.",
+        max_length=25, 
+        blank=True, 
+        default=''
+    )
+    github = models.CharField(
+        help_text = "Person's Github handle.",
+        max_length=25, 
+        blank=True, 
+        default=''
+    )
+    zotero = models.CharField(
+        help_text = "Person's Zotero handle.",
+        max_length=25, 
+        blank=True, default=''
+    )
+    linkedin = models.CharField(
+        help_text = "Person's LinkedIn handle.",
+        max_length=25, 
+        blank=True, 
+        default=''
+    )
     photo_gray = ImageSpecField(source='photo',
         processors=[
             Adjust(color=0,contrast=1.5, brightness=1.5),
@@ -199,27 +278,52 @@ class Person(VersionClass):
         ],
         format='PNG'
     )
-    photo_thumb = ImageSpecField(source='photo',
+    photo_thumb = ImageSpecField(
+        source='photo',
         processors=[ResizeToFill(100, 100)],
-        format='PNG')
-    slug = AutoSlugField(populate_from='full_name',
+        format='PNG'
+    )
+    slug = AutoSlugField(
+        populate_from='full_name',
         default=None, 
         always_update=False, 
         max_length=150
     )
-    affil = models.ManyToManyField(Institution, through='Affiliation')
-    vita = models.FileField(upload_to='authors/vitae/', blank=True, default='')
-    page = models.BooleanField(default=False)
+    affil = models.ManyToManyField(
+        Institution, 
+        help_text = "List of person's current and historical affiliations.",
+        through='Affiliation'
+    )
+    vita = models.FileField(
+        help_text = "Current curriculum vita.",
+        upload_to='authors/vitae/', 
+        blank=True, 
+        default=''
+    )
+    page = models.BooleanField(
+        help_text = "Does this person have their own detail page?",
+        default=False
+    )
     @property
     def formatted_markdown(self):
-        return markdownify(self.desc)
+        """
+        Formats bio markdown.
+        """
+        return markdownify(self.bio)
 
     @property
     def current_affiliations(self):
+        """
+        Lists current affiliations (i.e., those without a specified end date)
+        with primary affiliations first.
+        """
         return self.affiliation_set.filter(end = None).order_by('-primary')
 
     @property
     def primary_affiliation(self):
+        """
+        Returns primary affiliation.
+        """
         return self.affiliation_set.filter(primary = True)
 
     @property
@@ -252,16 +356,22 @@ class Person(VersionClass):
         return self.full_name
 
 class SiteWideSetting(VersionClass):
+    """
+    This model describes site-wide settings.
+    """
     csl = models.ForeignKey(
         'CitationStyle',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE
+        help_text = "Choose a Citation Style Language (CSL)",
+        null = True,
+        blank = True,
+        on_delete = models.CASCADE
     )
-    main_person = models.ForeignKey(Person, 
-        null=True, 
-        blank=True, 
-        on_delete=models.SET_NULL
+    main_person = models.ForeignKey(
+        Person, 
+        help_text = "Which person is the focus of this site?",
+        null = True, 
+        blank = True, 
+        on_delete = models.SET_NULL
     )
 
     class Meta:
@@ -272,14 +382,47 @@ class SiteWideSetting(VersionClass):
         return self.csl.name + " " + self.main_person.full_name
     
 class Education(VersionClass):
-    start = models.DateField(null=False, blank=False)
-    end = models.DateField(null=True, blank=True)
-    terminal = models.BooleanField(default=False)
-    institution = models.ForeignKey(Institution, on_delete=models.CASCADE)
-    concentration = models.CharField(max_length=150, blank=True)
-    desc = MarkdownxField(blank=True)
-    committee = models.ManyToManyField(Person, through='Committee_Membership')
-    show = models.BooleanField(default=True)
+    """
+    Model describes periods of education, with resulting degrees, institutions,
+    committees, etc.
+    """
+    start = models.DateField(
+        help_text = "Start of a period of education/degree program.",
+        null=False, 
+        blank=False
+    )
+    end = models.DateField(
+        help_text = "End of a period of education/degree program.",
+        null=True, 
+        blank=True
+    )
+    terminal = models.BooleanField(
+        help_text = "Is this the last degree obtained by a person?",
+        default=False
+    )
+    institution = models.ForeignKey(
+        Institution, 
+        help_text = "Credential-granting institution.",
+        on_delete=models.CASCADE
+    )
+    concentration = models.CharField(
+        help_text = "Major, concentration, etc.",
+        max_length=150, 
+        blank=True
+    )
+    desc = MarkdownxField(
+        help_text = "Description of the degree or period of education.",
+        blank=True
+    )
+    committee = models.ManyToManyField(
+        Person, 
+        help_text = "Lists committee members for degree-granting process.",
+        through='Committee_Membership'
+    )
+    show = models.BooleanField(
+        help_text = "Show this period of education on the front-end?",
+        default=True
+    )
     DEGREES = [
         ('MCP', 'M. City Planning'),
         ('PhD', 'Ph.D.'),
@@ -300,6 +443,7 @@ class Education(VersionClass):
         ('', 'None'),
     ]
     degree = models.CharField(
+        help_text = "What type of degree was awarded/is the anticipated result?",
         max_length = 5,
         choices = DEGREES,
         blank=True,
@@ -314,9 +458,24 @@ class Education(VersionClass):
         return self.degree + ' ' + self.concentration
 
 class Committee_Membership(VersionClass):
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
-    education = models.ForeignKey(Education, on_delete=models.CASCADE)
-    chair = models.BooleanField(default=False)
+    """
+    Model relates Person to Education, describing members
+    of a degree-granting/guiding committee.
+    """
+    person = models.ForeignKey(
+        Person,
+        help_text = "Person related to the degree committee.",
+        on_delete=models.CASCADE
+    )
+    education = models.ForeignKey(
+        Education, 
+        help_text = "Period of education guided by the degree committee.",
+        on_delete=models.CASCADE
+    )
+    chair = models.BooleanField(
+        help_text = "Designates chair/non-chair of the degree committee.",
+        default=False
+    )
 
     class Meta:
         verbose_name = "Committee Membership"
@@ -326,6 +485,12 @@ class Committee_Membership(VersionClass):
         return self.person.full_name + ', ' + self.education.degree
 
 class Affiliation(VersionClass):
+    """
+    These are relationships between individuals and institutions.
+    They can (at the moment) take two forms: appointments, which,
+    in general, are salaried, and affiliations which, in general, are
+    honorary or voluntary.
+    """
     start = models.DateField(
         help_text = "Start of the affiliation.",
         null=False, 
@@ -351,6 +516,11 @@ class Affiliation(VersionClass):
     primary = models.BooleanField(
         help_text = "Is this the person's primary affiliation?",
         default=False
+    )
+    email = models.EmailField(
+        help_text = "Email associated with a given affiliation.",
+        blank=True, 
+        default=''
     )
     title = models.CharField(
         help_text = "What is the person's title?",
@@ -383,6 +553,22 @@ class Affiliation(VersionClass):
         help_text = "Should this affiliation appear on the front-end?",
         default=False
     )
+
+    def save(self, *args, **kwargs):
+        """
+        Ensures there can be only one primary affiliation.
+        Sets primary to last set primary affil, removing
+        setting primary on other affils equal to false.
+        """
+        if self.primary:
+            try:
+                temp = Affiliation.objects.get(primary=True)
+                if self != temp:
+                    temp.primary = False
+                    temp.save()
+            except Affiliation.DoesNotExist:
+                pass
+        super(Affiliation, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Affiliation"
@@ -420,6 +606,10 @@ class ElevContours(VersionClass):
         return str(self.geom)
 
 class Post(VersionClass):
+    """
+    This model describes posts announcing or documenting 
+    new events, awards, articles, etc.
+    """
     title = models.CharField(
         help_text = "Post title (up to 150 chars).",
         max_length=150
@@ -428,9 +618,18 @@ class Post(VersionClass):
         help_text = """Post content (can include Pandoc citations 
             if they appear in the bibliography).""",
     )
-    display_datetime = models.DateTimeField()
-    authors = models.ManyToManyField(Person)
-    banner = models.ImageField(null=True, upload_to = 'posts/banners/%Y/%m/%d')
+    display_datetime = models.DateTimeField(
+        help_text = "Datetime that should be displayed for the post.",
+    )
+    authors = models.ManyToManyField(
+        Person,
+        help_text = "Authors of this post.",
+    )
+    banner = models.ImageField(
+        help_text = "Image to be displayed across the detail. Best if wide.",
+        null=True, 
+        upload_to = 'posts/banners/%Y/%m/%d'
+    )
     banner_thumb = ImageSpecField(
         source='banner',
         processors=[ResizeToFill(200, 60)],
@@ -443,13 +642,40 @@ class Post(VersionClass):
         format='JPEG',
         options={'quality': 60}
     )
-    content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
-    content_object = GenericForeignKey('content_type', 'object_id')
-    bib = models.FileField(upload_to='bibs/', blank=True)
-    attach = models.FileField(upload_to='attachments/', blank=True, default='')
-    attach_kind = models.CharField(max_length=150)
-    slug = AutoSlugField(populate_from='title', 
+    content_type = models.ForeignKey(
+        ContentType, 
+        help_text = """This is one of the fields necessary for GenericForeignKey
+             (content_object) to other arbitrary objects.""",
+        null=True, 
+        blank=True, 
+        on_delete=models.CASCADE
+    )
+    object_id = models.PositiveIntegerField(
+        help_text = "Unique identifier for arbitrary table.",
+        null=True, 
+        blank=True
+    )
+    content_object = GenericForeignKey(
+        'content_type', 
+        'object_id', 
+    )
+    bib = models.FileField(
+        help_text = "Bibliography file. Formatted in BetterBibLaTex.",
+        upload_to='bibs/', 
+        blank=True
+    )
+    attach = models.FileField(
+        help_text = "Attachment to this blog post.",
+        upload_to='attachments/', 
+        blank=True, 
+        default=''
+    )
+    attach_kind = models.CharField(
+        help_text = "What kind of thing is the attachment? E.g., syllabus, article).",
+        max_length=150
+    )
+    slug = AutoSlugField(
+        populate_from='title', 
         default=None,
         always_update=False, 
         null=True, 
@@ -457,18 +683,30 @@ class Post(VersionClass):
     )
 
     def slugify_function(self, content, words):
+        """
+        Slugifies title of blog post for URL.
+        """
         return "-".join(default_slugify(content).split('-', words)[:words])
 
     @property
     def date(self):
+        """
+        Returns the display_datetime date.
+        """
         return self.display_datetime.date()
 
     @property
     def time(self):
+        """
+        Returns the display_datetime time.
+        """
         return self.display_datetime.time()
 
     @cached_property
     def pandoc_process(self):
+        """
+        Process the post content using pandoc and the sitewide CSL.
+        """
         csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
         try:
             biblio=self.bib.url
@@ -488,8 +726,13 @@ class Post(VersionClass):
         return self.title
 
 class CitationStyle(VersionClass):
-    name = models.CharField(max_length=50, unique=True)
-    file = models.FileField(upload_to='citestyles/')
+    name = models.CharField(
+        max_length=50, 
+        unique=True
+    )
+    file = models.FileField(
+        upload_to='citestyles/'
+    )
 
     class Meta:
         verbose_name = "Citation Style"
@@ -499,17 +742,52 @@ class CitationStyle(VersionClass):
         return self.name
 
 class Event(VersionClass):
-    banner = models.ImageField(null=True, blank=True, upload_to = 'events/banners/%Y/%m/%d')
-    day = models.DateField()
-    start = models.TimeField()
-    end = models.TimeField()
-    title = models.CharField(max_length=100)
-    website = models.URLField(blank=True, default='')
-    desc = MarkdownxField()
-    participant = models.ManyToManyField(Person, through='Role')
-    virtual_url = models.URLField(blank=True, default='')
-    host = models.ManyToManyField(Institution, blank=True)
-    cancel = models.BooleanField(default=False)
+    banner = models.ImageField(
+        help_text = "Event banner image.",
+        null=True, 
+        blank=True, 
+        upload_to = 'events/banners/%Y/%m/%d'
+    )
+    day = models.DateField(
+        help_text = "On what day does the event take place?"
+    )
+    start = models.TimeField(
+        help_text = "Provide start time."
+    )
+    end = models.TimeField(
+        help_text = "Provide end time."
+    )
+    title = models.CharField(
+        help_text = "What is the event's title?",
+        max_length=100
+    )
+    website = models.URLField(
+        help_text = "Provide a link to the event website.",
+        blank=True, 
+        default=''
+    )
+    desc = MarkdownxField(
+        help_text = "Describe the event (markdown-enabled)."
+    )
+    participant = models.ManyToManyField(
+        Person, 
+        help_text = "Associate individual participants with the event by their role.",
+        through='Role'
+    )
+    virtual_url = models.URLField(
+        help_text = "What is the URL of the virtual event (if this applies...)",
+        blank=True, 
+        default=''
+    )
+    host = models.ManyToManyField(
+        Institution, 
+        help_text = "What is the hosting institution?",
+        blank=True
+    )
+    cancel = models.BooleanField(
+        help_text = "Check this box if the event is canceled.",
+        default=False
+    )
 
     class Meta:
         verbose_name = "Event"
@@ -519,8 +797,16 @@ class Event(VersionClass):
         return self.title
 
 class Role(VersionClass):
-    participant = models.ForeignKey(Person, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    participant = models.ForeignKey(
+        Person, 
+        help_text = "Person participating in a given event.",
+        on_delete=models.CASCADE
+    )
+    event = models.ForeignKey(
+        Event, 
+        help_text = "Event in which a person is participating.",
+        on_delete=models.CASCADE
+    )
     ROLES = [
         ('D', 'Discussant'),
         ('M', 'Moderator'),
@@ -530,6 +816,7 @@ class Role(VersionClass):
         ('W', 'Workshop Leader')
     ]
     role = models.CharField(
+        help_text = "What is the person's role in the event?",
         max_length=1,
         choices=ROLES,
         default='L',

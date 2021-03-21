@@ -10,6 +10,9 @@ from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill, ResizeToCover, Adjust, ColorOverlay, SmartResize
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from .zotero_update import zotero_pull, zotero_version
+from django.conf import settings
+import os
 
 class VersionClass(models.Model):
     """
@@ -373,6 +376,59 @@ class SiteWideSetting(VersionClass):
         blank = True, 
         on_delete = models.SET_NULL
     )
+    main_bibliography = models.IntegerField(
+        help_text = "What is the Zotero ID of the site bibliography?",
+        null = True, 
+        blank = True
+    )
+    BIB_TYPES = [
+        ('user', 'User'),
+        ('group', 'Group'),
+        ('', 'None')
+    ]
+    main_bibliography_type = models.CharField(
+        help_text = "Of what type is this bibliography?",
+        max_length = 5,
+        choices = BIB_TYPES,
+        blank=True,
+        default=''
+    )
+    main_bibliography_collection = models.CharField(
+        help_text = "Is this bibliography a specific collection?",
+        null = True, 
+        blank = True,
+        max_length=50
+    )
+    main_bibliography_version = models.IntegerField(
+        help_text = "Auto-updated bibliography version.",
+        null = True, 
+        blank = True
+    )
+    main_bibliography_file = models.FileField(
+        help_text = "Auto-updated bibliography file.",
+        default='',
+        blank=True
+    )
+    
+    def save(self, *args, **kwargs):
+        """
+        Overwrite save method to update main bibliography when model is saved.
+        """
+        library_id = self.main_bibliography
+        library_type = self.main_bibliography_type
+        library_collection = self.main_bibliography_collection
+        if self.main_bibliography_version:
+            db_version = self.main_bibliography_version
+            current_version = zotero_version(library_id, library_type, library_collection)
+            bib_file = self.main_bibliography_file
+            if db_version == current_version and os.path.exists(os.path.join(settings.MEDIA_ROOT, str(bib_file))):
+                pass
+            else: 
+                self.main_bibliography_version = current_version
+                zotero_pull(library_id, library_type, library_collection)
+        else:
+            self.main_bibliography_version, self.main_bibliography_file = zotero_pull(library_id, library_type, library_collection)
+        super(SiteWideSetting, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "SiteWideSetting"
@@ -672,7 +728,10 @@ class Post(VersionClass):
     )
     attach_kind = models.CharField(
         help_text = "What kind of thing is the attachment? E.g., syllabus, article).",
-        max_length=150
+        max_length=150,
+        blank=True, 
+        default='',
+        null=True
     )
     slug = AutoSlugField(
         populate_from='title', 
@@ -707,21 +766,24 @@ class Post(VersionClass):
         """
         Process the post content using pandoc and the sitewide CSL.
         """
-        csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
         try:
-            biblio=self.bib.url
+            csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
+        except:
+            csl = None
+        try:
+            biblio=SiteWideSetting.objects.all().order_by('-id')[0].main_bibliography_file.url
         except:
             biblio=None
         return pandocify(
             content=self.content,
-            csl=csl,
-            bib=biblio
+            csl=settings.BASE_DIR+csl,
+            bib=settings.BASE_DIR+biblio
         )
 
     class Meta:
         verbose_name = "Post"
         verbose_name_plural = "Posts"
-
+    
     def __str__(self):
         return self.title
 

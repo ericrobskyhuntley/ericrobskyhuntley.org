@@ -13,8 +13,8 @@ def pandocify(content, csl, bib):
         filters = ['pandoc-citeproc']
         extra_args = ['--mathjax',
                  '--smart',
-                 '--bibliography='+settings.BASE_DIR+bib,
-                 '--csl='+settings.BASE_DIR+csl]
+                 '--bibliography='+bib,
+                 '--csl='+csl]
         content = content + "\n\r### References"
     else:
         filters = []

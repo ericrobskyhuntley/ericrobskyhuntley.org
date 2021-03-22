@@ -22,6 +22,7 @@ Pillow==8.1.0
 psycopg2==2.8.6
 pypandoc==1.5
 pyparsing==2.4.7
+python-dotenv==0.15.0
 pytz==2018.9
 Pyzotero==1.4.20
 requests==2.25.1

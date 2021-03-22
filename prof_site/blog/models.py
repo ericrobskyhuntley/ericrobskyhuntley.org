@@ -357,6 +357,76 @@ class Person(VersionClass):
 
     def __str__(self):
         return self.full_name
+    
+class Library(VersionClass):
+    """
+    This model describes a Zotero library.
+    """
+    name = models.CharField(
+        help_text = "Name of this library.",
+        max_length = 100,
+        null=False,
+        blank=False
+    )
+    zotero_id = models.IntegerField(
+        help_text = "What is the Zotero ID of the site bibliography?",
+        null = True, 
+        blank = True
+    )
+    KINDS = [
+        ('user', 'User'),
+        ('group', 'Group'),
+        ('', 'None')
+    ]
+    kind = models.CharField(
+        help_text = "Of what kind is this library?",
+        max_length = 5,
+        choices = KINDS,
+        blank=True,
+        default=''
+    )
+    collection = models.CharField(
+        help_text = "Specific subcollection id. (N.b., these don't version well.)",
+        null = True, 
+        blank = True,
+        max_length=50
+    )
+    version = models.IntegerField(
+        help_text = "Auto-updated bibliography version.",
+        null = True, 
+        blank = True
+    )
+    bib_file = models.FileField(
+        help_text = "Auto-updated bibliography file.",
+        default='',
+        blank=True
+    )
+    def save(self, *args, **kwargs):
+        """
+        Overwrite save method to update main bibliography when model is saved.
+        """
+        library_id = self.zotero_id
+        library_kind = self.kind
+        library_collection = self.collection
+        if self.version:
+            db_version = self.version
+            current_version = zotero_version(library_id, library_kind, library_collection)
+            bib_file = self.bib_file
+            if db_version == current_version and os.path.exists(os.path.join(settings.MEDIA_ROOT, str(bib_file))):
+                pass
+            else: 
+                self.version = current_version
+                zotero_pull(library_id, library_kind, library_collection)
+        else:
+            self.version, self.bib_file = zotero_pull(library_id, library_kind, library_collection)
+        super(Library, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Zotero Library"
+        verbose_name_plural = "Zotero Libraries"
+
+    def __str__(self):
+        return self.name
 
 class SiteWideSetting(VersionClass):
     """
@@ -376,59 +446,13 @@ class SiteWideSetting(VersionClass):
         blank = True, 
         on_delete = models.SET_NULL
     )
-    main_bibliography = models.IntegerField(
-        help_text = "What is the Zotero ID of the site bibliography?",
+    library = models.ForeignKey(
+        Library,
+        help_text = "What Zotero library should this use?",
         null = True, 
-        blank = True
+        blank = True, 
+        on_delete = models.SET_NULL
     )
-    BIB_TYPES = [
-        ('user', 'User'),
-        ('group', 'Group'),
-        ('', 'None')
-    ]
-    main_bibliography_type = models.CharField(
-        help_text = "Of what type is this bibliography?",
-        max_length = 5,
-        choices = BIB_TYPES,
-        blank=True,
-        default=''
-    )
-    main_bibliography_collection = models.CharField(
-        help_text = "Is this bibliography a specific collection?",
-        null = True, 
-        blank = True,
-        max_length=50
-    )
-    main_bibliography_version = models.IntegerField(
-        help_text = "Auto-updated bibliography version.",
-        null = True, 
-        blank = True
-    )
-    main_bibliography_file = models.FileField(
-        help_text = "Auto-updated bibliography file.",
-        default='',
-        blank=True
-    )
-    
-    def save(self, *args, **kwargs):
-        """
-        Overwrite save method to update main bibliography when model is saved.
-        """
-        library_id = self.main_bibliography
-        library_type = self.main_bibliography_type
-        library_collection = self.main_bibliography_collection
-        if self.main_bibliography_version:
-            db_version = self.main_bibliography_version
-            current_version = zotero_version(library_id, library_type, library_collection)
-            bib_file = self.main_bibliography_file
-            if db_version == current_version and os.path.exists(os.path.join(settings.MEDIA_ROOT, str(bib_file))):
-                pass
-            else: 
-                self.main_bibliography_version = current_version
-                zotero_pull(library_id, library_type, library_collection)
-        else:
-            self.main_bibliography_version, self.main_bibliography_file = zotero_pull(library_id, library_type, library_collection)
-        super(SiteWideSetting, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "SiteWideSetting"

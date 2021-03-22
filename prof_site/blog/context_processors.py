@@ -1,4 +1,5 @@
-from .models import Person
+from .models import Person, SiteWideSetting
 
 def main_author(request):
-    return {'main_author': Person.objects.filter(affiliation__primary=True)[0]}
+    main_person_id = SiteWideSetting.objects.all()[0].main_person.id
+    return {'main_author': Person.objects.filter(id=main_person_id)[0]}

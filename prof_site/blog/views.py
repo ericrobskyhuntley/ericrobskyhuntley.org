@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.serializers import serialize
 from el_pagination.decorators import page_template
 from django.db.models import F
-from .models import Post, Person, UrbanArea, Land, Event, Education, Affiliation, Award
+from .models import SiteWideSetting, Post, Person, UrbanArea, Land, Event, Education, Affiliation, Award
 from django.http import HttpResponse, JsonResponse
 from .serializers import EducationSerializer, InstitutionSerializer, MainPersonSerializer, AffiliationSerializer, AwardSerializer
 
@@ -14,31 +14,47 @@ from el_pagination.views import AjaxListView
 
 def vita_view(request):
     try:
+        main_person_id = SiteWideSetting.objects.all()[0].main_person.id
         main_person = Person.objects.filter(
-            affiliation__primary=True
+                id=main_person_id
             ).all()
         education = Education.objects.filter(
-            show=True
-            ).order_by(F('end').desc(nulls_first=True))
+                show=True,
+                person__id=main_person_id
+            ).order_by(
+                F('end').desc(nulls_first=True)
+            )
         appointments = Affiliation.objects.filter(
-            show=True,
-            kind='App',
-            person__affiliation__primary=True
-            ).order_by(F('end').desc(nulls_first=True))
+                person__id=main_person_id,
+                show=True,
+                kind='App',
+            ).order_by(
+                F('primary').desc(),
+                F('end').desc(nulls_first=True),
+            )
         affiliations = Affiliation.objects.filter(
-            show=True,
-            kind='Aff',
-            person__affiliation__primary=True,
-            end=None
-            ).order_by(F('end').desc(nulls_first=True))
+                person__id=main_person_id,
+                show=True,
+                kind='Aff',
+                end=None
+            ).order_by(
+                F('end').desc(nulls_first=True)
+            )
         funding = Award.objects.filter(
-            show=True,
-            kind='F'
+                pi_awardee__id=main_person_id,
+                show=True,
+                kind='F'
             ).order_by(F('start').desc(nulls_first=True))
         awards = Award.objects.filter(
-            show=True,
-            kind='A'
+                pi_awardee__id=main_person_id,
+                show=True,
+                kind='A'
             ).order_by(F('start').desc(nulls_first=True))
+        advisees = Education.objects.filter(
+                committee__id__exact=main_person_id
+            ).order_by(
+                F('end').desc(nulls_first=True)
+            )
     except Education.DoesNotExist or Person.DoesNotExist or Affiliation.DoesNotExist or Award.DoesNotExist:
         return HttpResponse(status=404)
     
@@ -49,6 +65,7 @@ def vita_view(request):
         affiliations_s = AffiliationSerializer(affiliations, many=True)
         funding_s = AwardSerializer(funding, many=True)
         awards_s = AwardSerializer(awards, many=True)
+        advisees_s = EducationSerializer(advisees, many=True)
         return JsonResponse({
             'main': main_s.data[0],
             'appointments': appointments_s.data,
@@ -56,6 +73,7 @@ def vita_view(request):
             'affiliations': affiliations_s.data,
             'funding': funding_s.data,
             'awards': awards_s.data,
+            'advisees': advisees_s.data
             }, safe=False)
 
 class IndexView(AjaxListView):

@@ -1,5 +1,6 @@
 from markdownx.models import MarkdownxField
 from django.contrib.gis.db import models
+from django.db.models import F
 from markdownx.utils import markdownify
 from .pandoc import pandocify
 from autoslug.settings import slugify as default_slugify
@@ -136,6 +137,12 @@ class Award(VersionClass):
         null = False,
         blank = True,
         default = 'USD'
+    )
+    pi_awardee = models.ForeignKey(
+        'Person', 
+        help_text = "P.I. or awardee.",
+        null = True, 
+        on_delete = models.SET_NULL
     )
     grantees = models.ManyToManyField(
         Institution,
@@ -320,7 +327,7 @@ class Person(VersionClass):
         Lists current affiliations (i.e., those without a specified end date)
         with primary affiliations first.
         """
-        return self.affiliation_set.filter(end = None).order_by('-primary')
+        return self.affiliation_set.filter(end = None).order_by(F('primary').desc(nulls_last=True))
 
     @property
     def primary_affiliation(self):
@@ -480,6 +487,13 @@ class Education(VersionClass):
         help_text = "Is this the last degree obtained by a person?",
         default=False
     )
+    person = models.ForeignKey(
+        'Person', 
+        help_text = "List of person's current and historical education.",
+        on_delete=models.CASCADE,
+        related_name="help",
+        null=True
+    )
     institution = models.ForeignKey(
         Institution, 
         help_text = "Credential-granting institution.",
@@ -488,6 +502,28 @@ class Education(VersionClass):
     concentration = models.CharField(
         help_text = "Major, concentration, etc.",
         max_length=150, 
+        blank=True
+    )
+    thesis_title = models.CharField(
+        help_text = "Major, concentration, etc.",
+        max_length=300, 
+        blank=True
+    )
+    thesis_link = models.URLField(
+        help_text = "What is the website _connected to this affiliation_?",
+        blank=True,
+        default='',
+    )
+    THESIS_KINDS = [
+        ('diss', 'Dissertation'),
+        ('mths', "Master's Thesis"),
+        ('ugth', "Undergraduate Thesis"),
+        ('', 'None')
+    ]
+    thesis_type = models.CharField(
+        help_text = "Major, concentration, etc.",
+        choices = THESIS_KINDS,
+        max_length=4, 
         blank=True
     )
     desc = MarkdownxField(
@@ -792,12 +828,10 @@ class Post(VersionClass):
         """
         try:
             csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
-            print(csl)
         except:
             csl = None
         try:
             biblio=SiteWideSetting.objects.all().order_by('-id')[0].library.bib_file.url
-            print(biblio)   
         except:
             biblio=None
         return pandocify(

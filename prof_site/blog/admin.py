@@ -7,8 +7,12 @@ class AffiliationInline(admin.TabularInline):
     model = Affiliation
     extra = 1
 
+class EducationInline(admin.TabularInline):
+    model = Education
+    extra = 1
+
 class PersonAdmin(admin.ModelAdmin):
-    inlines = (AffiliationInline,)
+    inlines = (EducationInline, AffiliationInline,)
 
 class CommitteeInline(admin.TabularInline):
     model = Committee_Membership

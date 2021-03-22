@@ -792,10 +792,12 @@ class Post(VersionClass):
         """
         try:
             csl = SiteWideSetting.objects.all().order_by('-id')[0].csl.file.url
+            print(csl)
         except:
             csl = None
         try:
-            biblio=SiteWideSetting.objects.all().order_by('-id')[0].main_bibliography_file.url
+            biblio=SiteWideSetting.objects.all().order_by('-id')[0].library.bib_file.url
+            print(biblio)   
         except:
             biblio=None
         return pandocify(

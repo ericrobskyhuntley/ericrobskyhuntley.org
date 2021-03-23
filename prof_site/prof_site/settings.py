@@ -27,6 +27,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY')
 # ZOTERO KEY
 ZOTERO_KEY = os.getenv('ZOTERO_KEY')
+# OPENCAGE KEY
+OPENCAGE_KEY = os.getenv('OPENCAGE_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

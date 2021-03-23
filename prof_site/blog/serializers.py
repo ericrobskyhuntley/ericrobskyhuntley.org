@@ -5,7 +5,12 @@ class InstitutionSerializer(serializers.ModelSerializer):
     class Meta:
         depth = 6
         model = Institution
-        exclude = ['id', 'created_at', 'modified_at']
+        exclude = ['id', 'created_at', 'modified_at', 'location']
+
+# Required to apply InstitutionSerializer to self-
+# referential parent field. (Can't assign class
+# before definition.)
+InstitutionSerializer._declared_fields['parent'] = InstitutionSerializer()
 
 class AffiliationSerializer(serializers.ModelSerializer):
     start = serializers.DateField(format='%Y')
@@ -40,7 +45,6 @@ class EducationSerializer(serializers.ModelSerializer):
     institution = InstitutionSerializer()
     committee = CommitteeSerializer(many=True)
     degree = serializers.ReadOnlyField(source='get_degree_display')
-
     class Meta:
         model = Education
         exclude = ['terminal', 'show', 'id', 'created_at', 'modified_at']

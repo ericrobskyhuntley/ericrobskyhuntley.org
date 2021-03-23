@@ -13,6 +13,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from .zotero_update import zotero_pull, zotero_version
 from django.conf import settings
+from .geocode import geocode_address
 import os
 
 class VersionClass(models.Model):
@@ -57,7 +58,9 @@ class Institution(VersionClass):
     )
     postal = models.CharField(
         help_text = "Postcode in which institution is located.",
-        max_length=20
+        max_length=20,
+        blank=True,
+        default=''
     )
     country = models.CharField(
         help_text = "Country in which institution is located.",
@@ -78,8 +81,20 @@ class Institution(VersionClass):
     )
     location = models.PointField(
         help_text = "Approximate location of institution.",
+        null=True,
+        blank=True
     )
-
+    def save(self, *args, **kwargs):
+        """
+        Overwrite save method to update main bibliography when model is saved.
+        """
+        if self.location:
+            pass
+        else:
+            add_array = [self.address, self.city, self.state, self.postal, self.country]
+            query = ','.join(filter(None, add_array))
+            self.location = geocode_address(query)
+        super(Institution, self).save(*args, **kwargs)
     class Meta:
         verbose_name = "Institution"
         verbose_name_plural = "Institutions"

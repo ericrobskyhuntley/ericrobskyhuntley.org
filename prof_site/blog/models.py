@@ -342,14 +342,14 @@ class Person(VersionClass):
         Lists current affiliations (i.e., those without a specified end date)
         with primary affiliations first.
         """
-        return self.affiliation_set.filter(end = None).order_by(F('primary').desc(nulls_last=True))
+        return self.affiliation_set.filter(end = None, show=True).order_by(F('primary').desc(nulls_last=True))
 
     @property
     def primary_affiliation(self):
         """
         Returns primary affiliation.
         """
-        return self.affiliation_set.filter(primary = True)
+        return self.affiliation_set.filter(primary = True, show=True)
 
     @property
     def loc_geojson(self):

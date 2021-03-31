@@ -878,6 +878,92 @@ class CitationStyle(VersionClass):
     def __str__(self):
         return self.name
 
+class Conference(VersionClass):
+    name = models.CharField(
+        help_text = "What is the event's title?",
+        max_length=100
+    )
+    organizations = models.ManyToManyField(
+        Institution, 
+        help_text = "Associated professional orgs?",
+        blank=True
+    )
+
+
+class ConferenceInstance(VersionClass):
+    start = models.DateField(
+        help_text = "On what day does the conference start?"
+    )
+    end = models.DateField(
+        help_text = "On what day does the conference end?"
+    )
+    conference = models.ForeignKey(
+        Conference,
+        help_text = "Which conference is this a part of?",
+        blank=True,
+        default='',
+        on_delete = models.SET_DEFAULT
+    )
+    virtual = models.BooleanField(
+        help_text = "Check this box if the conference is virtual.",
+        default=False
+    )
+    website = models.URLField(
+        help_text = "Provide a link to the conference website.",
+        blank=True, 
+        default=''
+    )
+    address = models.CharField(
+        help_text = "Address of the institution.",
+        max_length=200, 
+        null=False, 
+        blank=True, 
+        default=''
+    )
+    city = models.CharField(
+        help_text = "City in which institution is located.",
+        max_length=100
+    )
+    state = models.CharField(
+        help_text = "State in which institution is located.",
+        max_length=100
+    )
+    postal = models.CharField(
+        help_text = "Postcode in which institution is located.",
+        max_length=20,
+        blank=True,
+        default=''
+    )
+    country = models.CharField(
+        help_text = "Country in which institution is located.",
+        max_length=100
+    )
+    location = models.PointField(
+        help_text = "Approximate location of institution.",
+        null=True,
+        blank=True
+    )
+
+    def save(self, *args, **kwargs):
+        """
+        Overwrite save method to update main bibliography when model is saved.
+        """
+        if self.location:
+            pass
+        else:
+            add_array = [self.address, self.city, self.state, self.postal, self.country]
+            query = ','.join(filter(None, add_array))
+            self.location = geocode_address(query)
+        super(ConferenceInstance, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "Conference Instance"
+        verbose_name_plural = "Conferences Instances"
+
+    def __str__(self):
+        return str(self.start.year) + " " + self.conference.name
+
+
 class Event(VersionClass):
     banner = models.ImageField(
         help_text = "Event banner image.",
@@ -916,9 +1002,17 @@ class Event(VersionClass):
         blank=True, 
         default=''
     )
-    host = models.ManyToManyField(
+    conference = models.ForeignKey(
+        ConferenceInstance,
+        help_text = "Is the event part of a conference?",
+        null=True,
+        blank=True,
+        default='',
+        on_delete = models.SET_DEFAULT
+    )
+    sponsors = models.ManyToManyField(
         Institution, 
-        help_text = "What is the hosting institution?",
+        help_text = "What are the sponsoring institutions?",
         blank=True
     )
     cancel = models.BooleanField(
@@ -945,6 +1039,7 @@ class Role(VersionClass):
         on_delete=models.CASCADE
     )
     ROLES = [
+        ('O', 'Organizer'),
         ('D', 'Discussant'),
         ('M', 'Moderator'),
         ('P', 'Panelist'),

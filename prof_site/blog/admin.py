@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.gis import admin
 from markdownx.admin import MarkdownxModelAdmin
-from .models import Award, Library, Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role,SiteWideSetting
+from .models import Award, Conference, ConferenceInstance, Library, Person, Post, Institution, Education, Committee_Membership, Affiliation, CitationStyle, Event, Role,SiteWideSetting
 
 class AffiliationInline(admin.TabularInline):
     model = Affiliation
@@ -36,6 +36,8 @@ class PostAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Library)
 admin.site.register(Award)
+admin.site.register(Conference)
+admin.site.register(ConferenceInstance)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Education, EducationAdmin)
 admin.site.register(Event, EventAdmin)

@@ -30,6 +30,11 @@
   margin-bottom: 4rem;
 }
 
+.event-list {
+  height: 450px;
+  overflow: scroll;
+}
+
 .card-back {
   background-size: cover;
   mix-blend-mode: darken;

@@ -86,9 +86,10 @@ class IndexView(AjaxListView):
         return Post.objects.order_by('-display_datetime')[1:]
 
     def get_context_data(self, **kwargs):
+        today = datetime.now().date()
         context = super(IndexView, self).get_context_data(**kwargs)
         context['first'] = Post.objects.order_by('-display_datetime')[0]
-        context['events'] = Event.objects.order_by('day', 'start')
+        context['events'] = Event.objects.filter(day__gte=today).order_by('day', 'start')
         return context
 
 class PostDetailView(generic.DetailView):

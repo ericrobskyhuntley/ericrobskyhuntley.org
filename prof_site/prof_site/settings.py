@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'el_pagination',
     'markdownx',
     'rest_framework',
-    # 'corsheaders'
 ]
 
 REST_FRAMEWORK = {
@@ -60,8 +59,6 @@ REST_FRAMEWORK = {
     'rest_framework_jsonp.renderers.JSONPRenderer',
   ),
 }
-
-# CORS_ALLOW_ALL_ORIGINS = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -342,7 +342,15 @@ class Person(VersionClass):
         Lists current affiliations (i.e., those without a specified end date)
         with primary affiliations first.
         """
-        return self.affiliation_set.filter(end = None, show=True).order_by(F('primary').desc(nulls_last=True),F('start').desc())
+        return self.affiliation_set.filter(end = None, show=True, kind='Aff').order_by(F('primary').desc(nulls_last=True),F('start').desc())
+
+    @property
+    def current_appointments(self): 
+        """
+        Lists current appointments (i.e., those without a specified end date)
+        with primary affiliations first.
+        """
+        return self.affiliation_set.filter(end = None, show=True, kind='App').order_by(F('primary').desc(nulls_last=True),F('start').desc())
 
     @property
     def primary_affiliation(self):

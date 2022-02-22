@@ -10,16 +10,15 @@ top-level-division: section
 
 def pandocify(content, csl, bib):
     if bib:
-        filters = ['pandoc-citeproc']
-        extra_args = ['--mathjax',
-                 '--smart',
-                 '--bibliography='+bib,
-                 '--csl='+csl]
-        content = content + "\n\r### References"
-    else:
         filters = []
         extra_args = ['--mathjax',
-                    '--smart']
+                '--citeproc',
+                '--bibliography='+bib,
+                '--csl='+csl]
+        content = content + "<br> <h3>References</h3>"
+    else:
+        filters = []
+        extra_args = ['--mathjax']
     return pypandoc.convert_text(
         yaml + content,
         'html5',

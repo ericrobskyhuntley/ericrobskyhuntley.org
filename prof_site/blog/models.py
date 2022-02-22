@@ -897,6 +897,9 @@ class Conference(VersionClass):
         blank=True
     )
 
+    def __str__(self):
+        return str(self.name)
+
 
 class ConferenceInstance(VersionClass):
     start = models.DateField(

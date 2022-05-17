@@ -30,6 +30,9 @@ ZOTERO_KEY = os.getenv('ZOTERO_KEY')
 # OPENCAGE KEY
 OPENCAGE_KEY = os.getenv('OPENCAGE_KEY')
 
+# Starting with Django 3.2, can set the type for automatically
+# generated primary key fields.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

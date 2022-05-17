@@ -1,5 +1,6 @@
 import pypandoc
 from django.conf import settings
+from re import search
 
 yaml = """
 ---
@@ -15,7 +16,9 @@ def pandocify(content, csl, bib):
                 '--citeproc',
                 '--bibliography='+bib,
                 '--csl='+csl]
-        content = content + "\n\n### References"
+        cite_reg = "( |\[)-?@"
+        if search(cite_reg, content):
+            content = content + "\n\n### References"
     else:
         filters = []
         extra_args = ['--mathjax']
